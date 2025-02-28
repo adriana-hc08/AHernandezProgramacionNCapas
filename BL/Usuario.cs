@@ -1,7 +1,10 @@
-﻿using System;
+﻿using Microsoft.SqlServer.Server;
+using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,8 +12,6 @@ namespace BL
 {
     public class Usuario
     {
- 
-
         public static ML.Result Add(ML.Usuario usuario)
         {
             ML.Result result = new ML.Result();
@@ -22,7 +23,7 @@ namespace BL
                     string query = "INSERT INTO [dbo].[Usuario] ([Nombre],[ApellidoPaterno],[ApellidoMaterno]) " +
                         "VALUES (@Nombre,@ApellidoPaterno,@ApellidoMaterno);";
 
-                    SqlCommand command = new SqlCommand(query,contex);
+                    SqlCommand command = new SqlCommand(query, contex);
                     command.Parameters.AddWithValue("@Nombre", usuario.Nombre);
                     command.Parameters.AddWithValue("@ApellidoPaterno", usuario.ApellidoPaterno);
                     command.Parameters.AddWithValue("@ApellidoMaterno", usuario.ApellidoMaterno);
@@ -39,16 +40,14 @@ namespace BL
                         result.Correct = false;
                         result.ErrorMessage = "Ha ocurrido un error...";
                     }
-
                 }
             }
-            catch(Exception ex) 
+            catch (Exception ex)
             {
                 result.Correct = false;
                 result.ErrorMessage = ex.Message;
                 result.Ex = ex;
             }
-
             return result;
         }
 
@@ -68,7 +67,7 @@ namespace BL
                     command.Parameters.AddWithValue("@ApellidoMaterno", usuario.ApellidoMaterno);
                     contex.Open();
 
-                    int rowAffected=command.ExecuteNonQuery();
+                    int rowAffected = command.ExecuteNonQuery();
 
                     if (rowAffected > 0)
                     {
@@ -87,9 +86,12 @@ namespace BL
             }
             return result;
         }
+
+
         public static ML.Result Delete(ML.Usuario usuario)
         {
             ML.Result result = new ML.Result();
+
             try
             {
                 using (SqlConnection contex = new SqlConnection("Data Source=.;Initial Catalog=AHernandezProgramacionNCapas;User ID=sa;Password=pass@word1"))
@@ -118,7 +120,213 @@ namespace BL
 
             }
             return result;
+        }
 
+
+
+
+        public static ML.Result AddSP(ML.Usuario usuario)
+        {
+            ML.Result result = new ML.Result();
+
+            try
+            {
+                using (SqlConnection contex = new SqlConnection("Data Source=.;Initial Catalog=AHernandezProgramacionNCapas;User ID=sa;Password=pass@word1; Encrypt=False"))
+                {
+                    SqlCommand command = new SqlCommand("UsuarioAdd", contex);
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
+
+                    command.Parameters.AddWithValue("@Nombre", usuario.Nombre);
+                    command.Parameters.AddWithValue("@ApellidoPaterno", usuario.ApellidoPaterno);
+                    command.Parameters.AddWithValue("@ApellidoMaterno", usuario.ApellidoMaterno);
+                    contex.Open();
+
+                    int rowsAffected = command.ExecuteNonQuery();
+
+                    if (rowsAffected > 0)
+                    {
+                        result.Correct = true;
+                    }
+                    else
+                    {
+                        result.Correct = false;
+                        result.ErrorMessage = "Ha ocurrido un error...";
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Correct = false;
+                result.ErrorMessage = ex.Message;
+                result.Ex = ex;
+            }
+
+            return result;
+        }
+
+        public static ML.Result UpdateSP(ML.Usuario usuario)
+        {
+            ML.Result result = new ML.Result();
+            try
+            {
+                using (SqlConnection contex = new SqlConnection("Data Source=.;Initial Catalog=AHernandezProgramacionNCapas;User ID=sa;Password=pass@word1"))
+                {
+                    SqlCommand command = new SqlCommand("UsuarioUpdate", contex);
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
+
+                    command.Parameters.AddWithValue("@IdUsuario", usuario.IdUsuario);
+                    command.Parameters.AddWithValue("@Nombre", usuario.Nombre);
+                    command.Parameters.AddWithValue("@ApellidoPaterno", usuario.ApellidoPaterno);
+                    command.Parameters.AddWithValue("@ApellidoMaterno", usuario.ApellidoMaterno);
+                    contex.Open();
+
+                    int rowAffected = command.ExecuteNonQuery();
+
+                    if (rowAffected > 0)
+                    {
+                        result.Correct = true;
+                    }
+                    else
+                    {
+                        result.Correct = false;
+                        result.ErrorMessage = "Ha ocurrido un error...";
+                    }
+                }
+            }
+            catch
+            {
+
+            }
+            return result;
+        }
+        public static ML.Result DeleteSP(ML.Usuario usuario)
+        {
+            ML.Result result = new ML.Result();
+            try
+            {
+                using (SqlConnection contex = new SqlConnection("Data Source=.;Initial Catalog=AHernandezProgramacionNCapas;User ID=sa;Password=pass@word1"))
+                {
+                    SqlCommand command = new SqlCommand("UsuarioDelete", contex);
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
+
+                    command.Parameters.AddWithValue("@IdUsuario", usuario.IdUsuario);
+                    contex.Open();
+
+                    int rowAffected = command.ExecuteNonQuery();
+
+                    if (rowAffected > 0)
+                    {
+                        result.Correct = true;
+                    }
+                    else
+                    {
+                        result.Correct = false;
+                        result.ErrorMessage = "Ha ocurrido un error...";
+                    }
+                }
+            }
+            catch
+            {
+
+            }
+            return result;
+
+        }
+        public static ML.Result GetAll()
+        {
+            ML.Result result = new ML.Result();
+            try
+            {
+                using (SqlConnection contex = new SqlConnection("Data Source=.;Initial Catalog=AHernandezProgramacionNCapas;User ID=sa;Password=pass@word1"))
+                {
+                    SqlCommand cmd = new SqlCommand("UsuarioGetAll",contex);
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    contex.Open();
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    DataTable dataTable = new DataTable();
+                    da.Fill(dataTable);
+
+                    if (dataTable.Rows.Count > 0)
+                    {
+                        result.Objects = new List<object>();
+                        foreach(DataRow row in dataTable.Rows)
+                        {
+                            ML.Usuario usuario = new ML.Usuario();
+                            usuario.IdUsuario = Convert.ToInt32(row[0].ToString());
+                            usuario.Nombre = (row[1].ToString());
+                            usuario.ApellidoPaterno= (row[2].ToString());
+                            usuario.ApellidoMaterno= (row[3].ToString());
+                            result.Objects.Add(usuario);
+
+                        }
+                        result.Correct = true;
+       
+                    }
+                    else
+                    {
+                        result.Correct=false;
+                        result.ErrorMessage = "No se encontraron registros";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Correct=false;
+                result.ErrorMessage=ex.Message;
+                Console.WriteLine(ex.Message);
+            }
+            return result;
+        }
+        public static ML.Result GetbyId(int IdUsuario)
+        {
+            ML.Result result = new ML.Result();
+            try
+            {
+                using (SqlConnection contex = new SqlConnection("Data Source=.;Initial Catalog=AHernandezProgramacionNCapas;User ID=sa;Password=pass@word1"))
+                {
+                    SqlCommand cmd = new SqlCommand("UsuarioGetById", contex);
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@IdUsuario", IdUsuario);
+                    contex.Open();
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    DataTable dataTable = new DataTable();
+                    da.Fill(dataTable);
+
+                    if (dataTable.Rows.Count > 0)
+                    {
+                        result.Objects = new List<object>();
+                        foreach (DataRow row in dataTable.Rows)
+                        {                           
+                            ML.Usuario usuario=new ML.Usuario();
+                            
+                            usuario.Nombre = (row[0].ToString());
+                            usuario.ApellidoPaterno = (row[1].ToString());
+                            usuario.ApellidoMaterno = (row[2].ToString());
+                            result.Objects.Add(usuario);
+
+                        }
+                        result.Correct = true;
+
+                    }
+                    else
+                    {
+                        result.Correct = false;
+                        result.ErrorMessage = "No se encontraron registros";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Correct = false;
+                result.ErrorMessage = ex.Message;
+                Console.WriteLine(ex.Message);
+            }
+            return result;
         }
     }
 }
+
+
+
+

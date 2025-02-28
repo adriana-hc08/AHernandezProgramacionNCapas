@@ -6,13 +6,18 @@ using System.Threading.Tasks;
 
 namespace PL
 {
-    class Program
+    internal class Program
     {
         static void Main(string[] args)
         {
-            //Usuario.Add();
+            //PL.Usuario.Add();
             //Usuario.update();
-            Usuario.delete();
+            //Usuario.delete();
+            //PL.Usuario.AddSP();
+            //PL.Usuario.updateSP();
+            //PL.Usuario.deleteSP();
+            //PL.Usuario.GetAll();
+            PL.Usuario.GetbyId();
         }
     }
 }

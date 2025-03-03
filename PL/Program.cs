@@ -11,11 +11,11 @@ namespace PL
         static void Main(string[] args)
         {
             //PL.Usuario.Add();
-            //Usuario.update();
-            //Usuario.delete();
+            //Usuario.Update();
+            //Usuario.Delete();
             //PL.Usuario.AddSP();
-            //PL.Usuario.updateSP();
-            //PL.Usuario.deleteSP();
+            //PL.Usuario.UpdateSP();
+            //PL.Usuario.DeleteSP();
             //PL.Usuario.GetAll();
             PL.Usuario.GetbyId();
         }

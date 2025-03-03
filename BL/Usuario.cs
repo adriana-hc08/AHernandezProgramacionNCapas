@@ -12,21 +12,24 @@ namespace BL
 {
     public class Usuario
     {
+        //Metodos con el query completo
         public static ML.Result Add(ML.Usuario usuario)
         {
             ML.Result result = new ML.Result();
 
             try
             {
-                using (SqlConnection contex = new SqlConnection("Data Source=.;Initial Catalog=AHernandezProgramacionNCapas;User ID=sa;Password=pass@word1"))
+                using (SqlConnection contex = new SqlConnection(DL.Conexion.Get()))
                 {
-                    string query = "INSERT INTO [dbo].[Usuario] ([Nombre],[ApellidoPaterno],[ApellidoMaterno]) " +
-                        "VALUES (@Nombre,@ApellidoPaterno,@ApellidoMaterno);";
+                    string query = "INSERT INTO [dbo].[Usuario] ([Nombre],[ApellidoPaterno],[ApellidoMaterno],[IdRol]) " +
+                    "VALUES (@Nombre,@ApellidoPaterno,@ApellidoMaterno,@IdRol);";
 
                     SqlCommand command = new SqlCommand(query, contex);
+
                     command.Parameters.AddWithValue("@Nombre", usuario.Nombre);
                     command.Parameters.AddWithValue("@ApellidoPaterno", usuario.ApellidoPaterno);
                     command.Parameters.AddWithValue("@ApellidoMaterno", usuario.ApellidoMaterno);
+                    command.Parameters.AddWithValue("@IdRol", usuario.Rol.IdRol);
                     contex.Open();
 
                     int rowAffected = command.ExecuteNonQuery();
@@ -56,7 +59,7 @@ namespace BL
             ML.Result result = new ML.Result();
             try
             {
-                using (SqlConnection contex = new SqlConnection("Data Source=.;Initial Catalog=AHernandezProgramacionNCapas;User ID=sa;Password=pass@word1"))
+                using (SqlConnection contex = new SqlConnection(DL.Conexion.Get()))
                 {
                     string query = "UPDATE [dbo].[Usuario] SET Nombre=@Nombre,ApellidoPaterno=@ApellidoPaterno, ApellidoMaterno = @ApellidoMaterno WHERE IdUsuario= @IdUsuario";
 
@@ -94,7 +97,7 @@ namespace BL
 
             try
             {
-                using (SqlConnection contex = new SqlConnection("Data Source=.;Initial Catalog=AHernandezProgramacionNCapas;User ID=sa;Password=pass@word1"))
+                using (SqlConnection contex = new SqlConnection(DL.Conexion.Get()))
                 {
                     string query = "DELETE FROM [dbo].[Usuario] WHERE IdUsuario=@IdUsuario";
 
@@ -123,7 +126,7 @@ namespace BL
         }
 
 
-
+        //Metodos con store Procedure
 
         public static ML.Result AddSP(ML.Usuario usuario)
         {
@@ -131,14 +134,15 @@ namespace BL
 
             try
             {
-                using (SqlConnection contex = new SqlConnection("Data Source=.;Initial Catalog=AHernandezProgramacionNCapas;User ID=sa;Password=pass@word1; Encrypt=False"))
+                using (SqlConnection contex = new SqlConnection(DL.Conexion.Get()))
                 {
                     SqlCommand command = new SqlCommand("UsuarioAdd", contex);
-                    command.CommandType = System.Data.CommandType.StoredProcedure;
+                    command.CommandType = CommandType.StoredProcedure;
 
                     command.Parameters.AddWithValue("@Nombre", usuario.Nombre);
                     command.Parameters.AddWithValue("@ApellidoPaterno", usuario.ApellidoPaterno);
                     command.Parameters.AddWithValue("@ApellidoMaterno", usuario.ApellidoMaterno);
+                    command.Parameters.AddWithValue("@IdRol", usuario.Rol.IdRol);
                     contex.Open();
 
                     int rowsAffected = command.ExecuteNonQuery();
@@ -170,7 +174,7 @@ namespace BL
             ML.Result result = new ML.Result();
             try
             {
-                using (SqlConnection contex = new SqlConnection("Data Source=.;Initial Catalog=AHernandezProgramacionNCapas;User ID=sa;Password=pass@word1"))
+                using (SqlConnection contex = new SqlConnection(DL.Conexion.Get()))
                 {
                     SqlCommand command = new SqlCommand("UsuarioUpdate", contex);
                     command.CommandType = System.Data.CommandType.StoredProcedure;
@@ -179,6 +183,7 @@ namespace BL
                     command.Parameters.AddWithValue("@Nombre", usuario.Nombre);
                     command.Parameters.AddWithValue("@ApellidoPaterno", usuario.ApellidoPaterno);
                     command.Parameters.AddWithValue("@ApellidoMaterno", usuario.ApellidoMaterno);
+                    command.Parameters.AddWithValue("@IdRol", usuario.Rol.IdRol);
                     contex.Open();
 
                     int rowAffected = command.ExecuteNonQuery();
@@ -205,10 +210,10 @@ namespace BL
             ML.Result result = new ML.Result();
             try
             {
-                using (SqlConnection contex = new SqlConnection("Data Source=.;Initial Catalog=AHernandezProgramacionNCapas;User ID=sa;Password=pass@word1"))
+                using (SqlConnection contex = new SqlConnection(DL.Conexion.Get()))
                 {
                     SqlCommand command = new SqlCommand("UsuarioDelete", contex);
-                    command.CommandType = System.Data.CommandType.StoredProcedure;
+                    command.CommandType = CommandType.StoredProcedure;
 
                     command.Parameters.AddWithValue("@IdUsuario", usuario.IdUsuario);
                     contex.Open();
@@ -238,7 +243,7 @@ namespace BL
             ML.Result result = new ML.Result();
             try
             {
-                using (SqlConnection contex = new SqlConnection("Data Source=.;Initial Catalog=AHernandezProgramacionNCapas;User ID=sa;Password=pass@word1"))
+                using (SqlConnection contex = new SqlConnection(DL.Conexion.Get()))
                 {
                     SqlCommand cmd = new SqlCommand("UsuarioGetAll",contex);
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
@@ -257,8 +262,9 @@ namespace BL
                             usuario.Nombre = (row[1].ToString());
                             usuario.ApellidoPaterno= (row[2].ToString());
                             usuario.ApellidoMaterno= (row[3].ToString());
+                            usuario.Rol = new ML.Rol();
+                            usuario.Rol.IdRol = Convert.ToByte(row[4].ToString());  
                             result.Objects.Add(usuario);
-
                         }
                         result.Correct = true;
        
@@ -283,7 +289,7 @@ namespace BL
             ML.Result result = new ML.Result();
             try
             {
-                using (SqlConnection contex = new SqlConnection("Data Source=.;Initial Catalog=AHernandezProgramacionNCapas;User ID=sa;Password=pass@word1"))
+                using (SqlConnection contex = new SqlConnection(DL.Conexion.Get()))
                 {
                     SqlCommand cmd = new SqlCommand("UsuarioGetById", contex);
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
@@ -303,6 +309,8 @@ namespace BL
                             usuario.Nombre = (row[0].ToString());
                             usuario.ApellidoPaterno = (row[1].ToString());
                             usuario.ApellidoMaterno = (row[2].ToString());
+                            usuario.Rol = new ML.Rol();
+                            usuario.Rol.IdRol = Convert.ToByte(row[3].ToString());
                             result.Objects.Add(usuario);
 
                         }

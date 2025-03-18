@@ -161,7 +161,7 @@ namespace PL
             Console.WriteLine("ingresa el id del usuario a eliminar");
             usuario.IdUsuario = Convert.ToInt32(Console.ReadLine());
 
-            ML.Result result = BL.Usuario.DeleteSP(usuario);
+            ML.Result result = BL.Usuario.DeleteSP(usuario.IdUsuario);
 
             if (result.Correct)
             {
@@ -200,22 +200,22 @@ namespace PL
         }
         public static void GetbyId()
         {
-            //ML.Usuario usuario = new ML.Usuario();
+            
 
             Console.WriteLine("ingresa el id del usuario a visualizar");
             int IdUsuario = Convert.ToInt32(Console.ReadLine());
 
-            ML.Result result = BL.Usuario.GetbyId(IdUsuario);
+           ML.Result result = BL.Usuario.GetbyId(IdUsuario);
 
             if (result.Correct)
             {
-                foreach (ML.Usuario usuario in result.Objects)
-                {
-                    Console.WriteLine("Nombre:" + usuario.Nombre);
+                ML.Usuario usuario = (ML.Usuario)result.Object;
+
+                Console.WriteLine("Nombre:" + usuario.Nombre);
                     Console.WriteLine("ApellidoPaterno:" + usuario.ApellidoPaterno);
                     Console.WriteLine("ApellidoMaterno:" + usuario.ApellidoMaterno);
                     Console.WriteLine("Rol:" + usuario.Rol.IdRol);
-                }
+                
                 result.Correct = true;
 
             }

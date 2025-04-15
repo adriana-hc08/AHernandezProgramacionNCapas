@@ -35,6 +35,7 @@
                         <th>Estatus</th>
                         <th>CURP</th>
                         <th>Imagen</th>
+                        <th>Direccion</th>
                         <th>Eliminar</th>
                     </tr>
                 </tehead>
@@ -73,25 +74,26 @@
                                 {
                                     <img id="imgUsuario" height="120px" src="data:image/*;base64,@Convert.ToBase64String(usuario.Imagen)" width="120px" />
                                 }
-                                
+
                             </td>
+                            <td>@usuario.Direccion.Calle</td>
                             <td>
-                                <a href="@Url.Action("Delete","Usuario", new {IdUsuario=usuario.IdUsuario})">
+                                <a href="@Url.Action("Delete","Usuario", new {IdUsuario=usuario.IdUsuario})" onclick="alert('¡Esta seguro de eliminar este usuario!')">
                                     <i class="bi bi-trash" style="font-size: 2em;"></i>
                                 </a>
                             </td>
 
                         </tr>
-                    }
-                </tbody>
-            </table>
-        }
-        else
-        {
-            <div class="alert alert-danger" role="alert">
-                A simple danger alert-check it out!
-            </div>
-        }
-    </div>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <div class="alert alert-danger" role="alert">
+                        A simple danger alert-check it out!
+                    </div>
+                }
+     </div>
 </div>
 

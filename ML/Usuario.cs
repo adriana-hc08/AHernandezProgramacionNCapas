@@ -24,6 +24,7 @@ namespace ML
         public Boolean Estatus { get; set; }
         public string CURP { get; set; }
         public Byte[] Imagen { get; set; }
+        public ML.Direccion Direccion { get; set; } 
         public List<object> Usuarios { get; set; }
 
     }

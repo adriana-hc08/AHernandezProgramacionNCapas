@@ -1,0 +1,52 @@
+﻿@model ML.Usuario
+@{
+    ViewBag.Title = "DropDownList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>DropDownList</h2>
+<div class="container">
+    <div class="row">
+        <div class="col-3">
+            @Html.DropDownListFor(model => model.Direccion.Colonia.Municipio.Estado.IdEstado, new SelectList(Model.Direccion.Colonia.Municipio.Estado.Estados, "IdEstado", "Nombre"),
+           "Selecciona una opcion", new { @id = "ddlEstado", @class = "form-control", @onchange = "FillMunicipios()" })
+        </div>
+        <div class="col-3">
+            @Html.DropDownListFor(model => model.Direccion.Colonia.Municipio.IdMunicipio, new SelectList(string.Empty, "IdMunicipio", "Nombre"), 
+           "Selecciona una opcion",htmlAttributes: new { @id = "ddlMunicipio", @class = "form-control" })
+        </div>
+    </div>
+
+</div>
+
+<script src="~/Scripts/jquery-3.4.1.js"></script>
+<script type="text/javascript">
+    function FillMunicipios() {
+        let ddlIdEstado = $("#ddlEstado").val();
+
+        $.ajax({
+            type: 'GET'
+            url: '@Url.Action("MunicipioGetByIdEstado")',
+            dataType: 'json',
+
+            contentType: 'application/json',
+            data: { IdEstado: ddlIdEstado },
+            success: function (result) {
+                if (result.Correct) {
+                    $("#ddlMunicipio").empty();
+                    $("#ddlMunicipio").append('<option value="0">' + 'Selecione un Municipio' + '</option>');
+
+                    $.each(result.Objects, function (i, municipios) {
+                        $("#ddlMunicipio").append('<option value="'
+                            + municipios.IdMunicipio + '">'
+                            + municipios.Nombre + '</option>');
+                    });
+                }
+            },
+            Error: function (ex) {
+                alert('Failed.'+ ex)
+
+            }
+        });
+    }
+</script>

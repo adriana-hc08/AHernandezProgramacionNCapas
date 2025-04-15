@@ -29,7 +29,7 @@
                         <i class="bi bi-0-square" style="font-size: 1em;"></i>
                     </div>
                     @Html.TextBoxFor(model => model.IdUsuario, new { @class = "form-control" })
-                </div>         
+                </div>
             </div>
             <div class="col-4 ">
                 @Html.LabelFor(model => model.Nombre, new { @class = "form-label" })
@@ -38,7 +38,7 @@
                         <i class="bi bi-person" style="font-size: 1em;"></i>
                     </div>
                     @Html.TextBoxFor(model => model.Nombre, new { @class = "form-control" })
-                </div>                
+                </div>
             </div>
             <div class="col-4">
                 @Html.LabelFor(model => model.ApellidoPaterno, new { @class = "form-label" })
@@ -47,7 +47,7 @@
                         <i class="bi bi-person" style="font-size: 1em;"></i>
                     </div>
                     @Html.TextBoxFor(model => model.ApellidoPaterno, new { @class = "form-control" })
-                </div>             
+                </div>
             </div>
         </div>
         <div class="row">
@@ -58,7 +58,7 @@
                         <i class="bi bi-person" style="font-size: 1em;"></i>
                     </div>
                     @Html.TextBoxFor(model => model.ApellidoMaterno, new { @class = "form-control" })
-                </div>             
+                </div>
             </div>
             <div class="col-4">
                 @Html.LabelFor(model => model.UserName, new { @class = "form-label" })
@@ -68,113 +68,198 @@
                     </div>
                     @Html.TextBoxFor(model => model.UserName, new { @class = "form-control" })
                 </div>
-                
+
             </div>
             <div class="col-4">
-                @Html.LabelFor(model => model.Rol.IdRol, new { @class = "form-label" })
+                @Html.LabelFor(model => model.Rol, new { @class = "form-label" })
                 @* @Html.TextBoxFor(model => model.Rol.IdRol, new { @class = "form-control" })*@
                 <div class="input-group-prepend">
                     <div class="input-group-text">
                         <i class="bi bi-0-square" style="font-size: 1em;"></i>
                     </div>
-                    @Html.DropDownListFor(model => model.Rol.IdRol, new SelectList(Model.Rol.Roles, "IdRol", "Nombre"), "Selecciona una opcion", new { @class = "btn btn-default dropdown-toggle" })
-                </div>              
+                    @Html.DropDownListFor(model => model.Rol.IdRol, new SelectList(Model.Rol.Roles, "IdRol", "Nombre"), "Selecciona una opcion", new { @class = "form-control" })
+                </div>
             </div>
 
         </div>
+
         <div class="row">
-            <div class="col-3">
+            <div class="col-4">
                 @Html.LabelFor(model => model.Email, new { @class = "form-label" })
                 <div class="input-group-prepend">
                     <div class="input-group-text">
-                        <i class="bi bi-envelope-at" style="font-size: 1em;"></i>  
+                        <i class="bi bi-envelope-at" style="font-size: 1em;"></i>
                     </div>
                     @Html.TextBoxFor(model => model.Email, new { @class = "form-control" })
-                </div>                
+                </div>
             </div>
-            <div class="col-3">
+            <div class="col-4">
                 @Html.LabelFor(model => model.Password, new { @class = "form-label" })
                 <div class="input-group-prepend">
                     <div class="input-group-text">
-                        <i class="bi bi-lock" style="font-size: 1em;"></i>  
+                        <i class="bi bi-lock" style="font-size: 1em;"></i>
                     </div>
                     @Html.TextBoxFor(model => model.Password, new { @class = "form-control" })
-                </div>              
+                </div>
             </div>
-            <div class="col-3">
+            <div class="col-4">
                 @Html.LabelFor(model => model.FechaNacimiento, new { @class = "form-label" })
                 <div class="input-group-prepend">
                     <div class="input-group-text">
                         <i class="bi bi-calendar3" style="font-size: 1em;"></i>
                     </div>
                     @Html.TextBoxFor(model => model.FechaNacimiento, new { @class = "form-control" })
-                </div>               
+                </div>
             </div>
-            <div class="col-3">
+
+        </div>
+        <div class="row">
+            <div class="col-4">
                 @Html.LabelFor(model => model.Sexo, new { @class = "form-label" })
                 <div class="input-group-prepend">
                     <div class="input-group-text">
                         <i class="bi bi-lock" style="font-size: 1em;"></i>
                     </div>
                     @Html.TextBoxFor(model => model.Sexo, new { @class = "form-control" })
-                </div>               
+                </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-3">
+            <div class="col-4">
                 @Html.LabelFor(model => model.Telefono, new { @class = "form-label" })
                 <div class="input-group-prepend">
                     <div class="input-group-text">
                         <i class="bi bi-telephone" style="font-size: 1em;"></i>
                     </div>
                     @Html.TextBoxFor(model => model.Telefono, new { @class = "form-control" })
-                </div>                
+                </div>
             </div>
-            <div class="col-3">
+            <div class="col-4">
                 @Html.LabelFor(model => model.Celular, new { @class = "form-label" })
                 <div class="input-group-prepend">
                     <div class="input-group-text">
                         <i class="bi bi-phone" style="font-size: 1em;"></i>
                     </div>
                     @Html.TextBoxFor(model => model.Celular, new { @class = "form-control" })
-                </div>               
+                </div>
             </div>
-            <div class="col-3">
+
+        </div>
+        <div class="row">
+            <div class="col-4">
                 @Html.LabelFor(model => model.Estatus, new { @class = "form-label" })
                 <div class="input-group-prepend">
                     <div class="input-group-text">
                         <i class="bi bi-toggles2" style="font-size: 1em;"></i>
                     </div>
                     @Html.TextBoxFor(model => model.Estatus, new { @class = "form-control" })
-                </div>               
+                </div>
             </div>
-            <div class="col-3">
+            <div class="col-4">
                 @Html.LabelFor(model => model.CURP, new { @class = "form-label" })
                 <div class="input-group-prepend">
                     <div class="input-group-text">
                         <i class="bi bi-card-text" style="font-size: 1em;"></i>
                     </div>
                     @Html.TextBoxFor(model => model.CURP, new { @class = "form-control" })
-                </div>              
+                </div>
+            </div>
+            <div class="col-4">
+                @Html.LabelFor(model => model.Direccion.Calle, new { @class = "form-label" })
+                <div class="input-group-prepend">
+                    <div class="input-group-text">
+                        <i class="bi bi-card-text" style="font-size: 1em;"></i>
+                    </div>
+                    @Html.TextBoxFor(model => model.Direccion.Calle, new { @class = "form-control" })
+                </div>
             </div>
         </div>
-        @Html.HiddenFor(model =>model.Imagen)
-    <div class="row">
-        <div><input type="file" id="imgUsuarioInput" name="imgUsuarioInput" onchange="ValidarYPrevisualizar(event)" /></div>
-          <div class="col-4">
-               @if (Model.Imagen == null)
+
+        <div class="row">
+            <div class="col-4">
+                @Html.LabelFor(model => model.Direccion.NumeroInterior, new { @class = "form-label" })
+                <div class="input-group-prepend">
+                    <div class="input-group-text">
+                        <i class="bi bi-card-text" style="font-size: 1em;"></i>
+                    </div>
+                    @Html.TextBoxFor(model => model.Direccion.NumeroInterior, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="col-4">
+                @Html.LabelFor(model => model.Direccion.NumeroExterior, new { @class = "form-label" })
+                <div class="input-group-prepend">
+                    <div class="input-group-text">
+                        <i class="bi bi-card-text" style="font-size: 1em;"></i>
+                    </div>
+                    @Html.TextBoxFor(model => model.Direccion.NumeroExterior, new { @class = "form-control" })
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-4">
+                @Html.LabelFor(model => model.Direccion.Colonia.Municipio.Estado, new { @class = "form-label" })
+                <div class="input-group-prepend">
+                    <div class="input-group-text">
+                        <i class="bi bi-0-square" style="font-size: 1em;"></i>
+                    </div>                   
+                        @Html.DropDownListFor(model => model.Direccion.Colonia.Municipio.Estado.IdEstado, new SelectList(Model.Direccion.Colonia.Municipio.Estado.Estados, "IdEstado", "Nombre"),
+                                "Selecciona un Estado", new { @id = "ddlEstado", @class = "form-control", @onchange = "FillMunicipios()" })                   
+                </div>
+            </div>
+            <div class="col-4">
+                @Html.LabelFor(model => model.Direccion.Colonia.Municipio, new { @class = "form-label" })
+                <div class="input-group-prepend">
+                    <div class="input-group-text">
+                        <i class="bi bi-0-square" style="font-size: 1em;"></i>
+                    </div>
+                    @if (Model.Direccion.Colonia.Municipio.Municipios != null)
+                    {
+                        @Html.DropDownListFor(model => model.Direccion.Colonia.Municipio.IdMunicipio, new SelectList(Model.Direccion.Colonia.Municipio.Municipios, "IdMunicipio", "Nombre"),
+                            "Selecciona una opcion", htmlAttributes: new { id = "ddlMunicipio", @class = "form-control", @onchange = "FillColonias()" })
+                    }
+                    else
+                    {
+                        @Html.DropDownListFor(model => model.Direccion.Colonia.Municipio.IdMunicipio, new SelectList(string.Empty, "IdMunicipio", "Nombre"),
+                       "Selecciona una opcion", htmlAttributes: new { id = "ddlMunicipio", @class = "form-control", @onchange = "FillColonias()" })
+                    }
+                </div>
+            </div>
+            <div class="col-4">
+                @Html.LabelFor(model => model.Direccion.Colonia, new { @class = "form-label" })
+                <div class="input-group-prepend">
+                    <div class="input-group-text">
+                        <i class="bi bi-0-square" style="font-size: 1em;"></i>
+                    </div>
+                    @if (Model.Direccion.Colonia.Colonias != null)
+                    {
+                        @Html.DropDownListFor(model => model.Direccion.Colonia.IdColonia, new SelectList(Model.Direccion.Colonia.Colonias, "IdColonia", "Nombre"),
+                        "Selecciona una opcion", htmlAttributes: new { id = "ddlColonia", @class = "form-control" })
+                    }
+                    else
+                    {
+                      @Html.DropDownListFor(model => model.Direccion.Colonia.IdColonia, new SelectList(string.Empty, "IdColonia", "Nombre"),
+                      "Selecciona una opcion", htmlAttributes: new { id = "ddlColonia", @class = "form-control" })
+                    }
+
+                </div>
+            </div>
+        </div>
+        @Html.HiddenFor(model => model.Imagen)
+        <div class="row">
+            <div><input type="file" id="imgUsuarioInput" name="imgUsuarioInput" onchange="PrevisualizarImagen(event)" /></div>
+            <div class="col-4">
+                @if (Model.Imagen == null)
                 {
-                <img id="imgUsuario" height="200px" src="~/Img/imgDefault.png" width="200px" />
+                    <img id="imgUsuario" height="200px" src="~/Img/imgDefault.png" width="200px" />
                 }
                 else
                 {
-                     <img id="imgUsuario" height="200px" src="data:image/*;base64,@Convert.ToBase64String(Model.Imagen)" width="200px" />
-                }           
-          </div>
-      </div>
-      <div id="atertaImg" class="alert alert-danger alert-dismissible fade d-none mt-3" role="alert">
-          <strong>Error</strong> Archivo no permitido.Solo se aceptan imagenes en formato<strong>JPG,JPEG y PNG</strong>
-      </div>
+                    <img id="imgUsuario" height="200px" src="data:image/*;base64,@Convert.ToBase64String(Model.Imagen)" width="200px" />
+                }
+            </div>
+        </div>
+        <div id="atertaImg" class="alert alert-danger alert-dismissible fade d-none mt-3" role="alert">
+            <strong>Error</strong> Archivo no permitido.Solo se aceptan imagenes en formato<strong>JPG,JPEG y PNG</strong>
+        </div>
 
         <div class="row mt-3">
             <div class="col-1">
@@ -189,14 +274,85 @@
 </div>
 
 
+        <script src="~/Scripts/jquery-3.4.1.js"></script>
+        <script type="text/javascript">
 
-<script type="text/javascript">
+            //$(document).ready(function () {
+
+            //    $("#ddlEstado option:first").val("0");
+
+            //});
+
+    function FillMunicipios() {
+        let ddlIdEstado = $("#ddlEstado").val();
+
+        $.ajax({
+            type: 'GET',
+            url: '@Url.Action("MunicipioGetByIdEstado")',
+            dataType: 'json',
+
+            contentType: 'application/json',
+            data: { IdEstado: ddlIdEstado },
+            success: function (result) {
+                if (result.Correct) {
+                    $("#ddlMunicipio").empty();
+                    $("#ddlColonia").empty();
+                    $("#ddlMunicipio").append('<option value="0">' + 'Selecione un Municipio' + '</option>');
+                    $("#ddlColonia").append('<option value="0">' + 'Selecione una Colonia' + '</option>');
+
+                    $.each(result.Objects, function (i, municipios) {
+                        $("#ddlMunicipio").append('<option value="'
+                            + municipios.IdMunicipio + '">'
+                            + municipios.Nombre + '</option>');
+                    });
+                }
+            },
+            Error: function (ex) {
+                alert('Failed.'+ ex)
+
+            }
+        });
+    }
+
+
+    function FillColonias() {
+        let ddlIdMunicipio = $("#ddlMunicipio").val();
+
+        $.ajax({
+            type: 'GET',
+            url: '@Url.Action("ColoniaGetByIdMunicipio")',
+            dataType: 'json',
+
+            contentType: 'application/json',
+            data: { IdMunicipio: ddlIdMunicipio },
+            success: function (result) {
+                if (result.Correct) {
+                    $("#ddlColonia").empty();
+                    $("#ddlColonia").append('<option value="0">' + 'Selecione una Colonia' + '</option>');
+
+                    $.each(result.Objects, function (i, colonias) {
+                        $("#ddlColonia").append('<option value="'
+                            + colonias.IdColonia + '">'
+                            + colonias.Nombre + '</option>');
+                    });
+                }
+            },
+            Error: function (ex) {
+                alert('Failed.'+ ex)
+
+            }
+        });
+     }
+        //$("#ddlEstado").val("");
+
+
+
     function ValidarImagen(file) {
 
         var allowedExtensions = ["jpg", "jpeg", "png", "gif"];
         var extension = file.name.split('.').pop().toLowerCase();
         return allowedExtensions.includes(extension);
-        
+
     }
     function ValidarYPrevisualizar(event) {
         var input = event.target;
@@ -215,12 +371,12 @@
             input.value = "";//Limpiar el input si el archivo no es valido
     }
 
-    function PrevisualizarImagen (file) {
+    function PrevisualizarImagen (event) {
         var output = document.getElementById('imgUsuario');
         output.src = URL.createObjectURL(event.target.files[0]);
         output.onload = function () {
             URL.revokeObjectURL(output.src)
         }
     }
-</script>
+        </script>
 

@@ -41,7 +41,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Colonia.cs" />
+    <Compile Include="Direccion.cs" />
     <Compile Include="Estado.cs" />
+    <Compile Include="Municipio.cs" />
     <Compile Include="Result.cs" />
     <Compile Include="Rol.cs" />
     <Compile Include="Usuario.cs" />

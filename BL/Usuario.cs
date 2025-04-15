@@ -1,4 +1,5 @@
 ﻿using Microsoft.SqlServer.Server;
+using ML;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -7,6 +8,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+
 
 namespace BL
 {
@@ -121,7 +123,7 @@ namespace BL
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 result.Correct = false;
                 result.ErrorMessage = ex.Message;
@@ -159,6 +161,8 @@ namespace BL
                     command.Parameters.AddWithValue("@Estatus", usuario.Estatus);
                     command.Parameters.AddWithValue("@CURP", usuario.CURP);
                     command.Parameters.AddWithValue("@Imagen", usuario.Imagen);
+                    command.Parameters.AddWithValue("@IdDireccion", usuario.Direccion.IdDireccion);
+
                     contex.Open();
 
                     int rowsAffected = command.ExecuteNonQuery();
@@ -210,6 +214,8 @@ namespace BL
                     command.Parameters.AddWithValue("@Estatus", usuario.Estatus);
                     command.Parameters.AddWithValue("@CURP", usuario.CURP);
                     command.Parameters.AddWithValue("@Imagen", usuario.Imagen);
+                    command.Parameters.AddWithValue("@IdDireccion", usuario.Direccion.IdDireccion);
+
                     contex.Open();
 
                     int rowAffected = command.ExecuteNonQuery();
@@ -243,13 +249,16 @@ namespace BL
                     SqlCommand command = new SqlCommand("UsuarioDelete", contex);
                     command.CommandType = CommandType.StoredProcedure;
 
-                    command.Parameters.AddWithValue("@IdUsuario",IdUsuario);
+                    command.Parameters.AddWithValue("@IdUsuario", IdUsuario);
+                    command.Parameters.Add("@IdDireccion", SqlDbType.Int).Direction=ParameterDirection.Output;
                     contex.Open();
 
                     int rowAffected = command.ExecuteNonQuery();
 
                     if (rowAffected > 0)
                     {
+                        int IdDireccion = Convert.ToInt32(command.Parameters["@IdDireccion"].Value);
+                        result.Object = IdDireccion;
                         result.Correct = true;
                     }
                     else
@@ -259,7 +268,7 @@ namespace BL
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 result.Correct = false;
                 result.ErrorMessage = ex.Message;
@@ -275,7 +284,7 @@ namespace BL
             {
                 using (SqlConnection contex = new SqlConnection(DL.Conexion.Get()))
                 {
-                    SqlCommand cmd = new SqlCommand("UsuarioGetAll",contex);
+                    SqlCommand cmd = new SqlCommand("UsuarioGetAll", contex);
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     contex.Open();
                     SqlDataAdapter da = new SqlDataAdapter(cmd);
@@ -285,42 +294,100 @@ namespace BL
                     if (dataTable.Rows.Count > 0)
                     {
                         result.Objects = new List<object>();
-                        foreach(DataRow row in dataTable.Rows)
+                        foreach (DataRow row in dataTable.Rows)
                         {
                             ML.Usuario usuario = new ML.Usuario();
                             usuario.Rol = new ML.Rol();
                             usuario.IdUsuario = Convert.ToInt32(row[0].ToString());
                             usuario.Nombre = (row[1].ToString());
-                            usuario.ApellidoPaterno= (row[2].ToString());
-                            usuario.ApellidoMaterno= (row[3].ToString());
+                            usuario.ApellidoPaterno = (row[2].ToString());
+                            usuario.ApellidoMaterno = (row[3].ToString());
                             usuario.UserName = (row[4].ToString());
                             usuario.Rol.IdRol = Convert.ToByte(row[5].ToString());
                             usuario.Rol.Nombre = (row[6].ToString());
                             usuario.Email = (row[7].ToString());
                             usuario.Password = (row[8].ToString());
                             usuario.FechaNacimiento = (row[9].ToString());
-                            usuario.Sexo= (row[10].ToString());
+                            usuario.Sexo = (row[10].ToString());
                             usuario.Telefono = (row[11].ToString());
                             usuario.Celular = (row[12].ToString());
                             usuario.Estatus = Convert.ToBoolean(row[13].ToString());
                             usuario.CURP = (row[14].ToString());
-                            usuario.Imagen = row[15].ToString() !="" ? (byte[])row[15] :null;
+                            usuario.Imagen = row[15].ToString() != "" ? (byte[])row[15] : null;
+
+                            usuario.Direccion = new ML.Direccion();
+                            string valor = row[16].ToString();
+                            if (row[16].ToString() != "")
+                            {
+                                //si trae un id
+
+                                usuario.Direccion.IdDireccion = Convert.ToInt32(row[16].ToString()); //row[16] != UsuarioNull.Value && !string.IsNullOrWhiteSpace(row[16].ToString())
+                            } else
+                            {
+                                usuario.Direccion.IdDireccion = 0;
+                            }
+                            //? Convert.ToInt32(row[16])
+                            // : (int?)null;
+
+                            usuario.Direccion.Calle = row[17].ToString();
+                            usuario.Direccion.NumeroInterior = row[18].ToString();
+                            usuario.Direccion.NumeroExterior = row[19].ToString();
+
+                            usuario.Direccion.Colonia = new ML.Colonia();
+                            string val = row[20].ToString();
+                            if (row[20].ToString() != "")
+                            {
+                                usuario.Direccion.Colonia.IdColonia = Convert.ToInt32(row[20].ToString());
+                            }
+                            else
+                            {
+                                usuario.Direccion.Colonia.IdColonia =0;
+                            }
+                             // != "" ? Convert.ToInt32(null);
+                            usuario.Direccion.Colonia.Nombre = row[21].ToString();
+                            usuario.Direccion.Colonia.CodigoPostal = row[22].ToString();
+
+                            usuario.Direccion.Colonia.Municipio = new ML.Municipio();
+                            string mun = row[23].ToString();
+                            if (row[23].ToString() != "")
+                            {
+                                usuario.Direccion.Colonia.Municipio.IdMunicipio = Convert.ToInt32(row[23].ToString());
+                            }
+                            else
+                            {
+                                usuario.Direccion.Colonia.Municipio.IdMunicipio = 0;
+                            }                            
+                            usuario.Direccion.Colonia.Municipio.Nombre = row[24].ToString();
+
+                            usuario.Direccion.Colonia.Municipio.Estado = new ML.Estado();
+                            string est = row[25].ToString();
+                            if (row[25].ToString() != "")
+                            {
+                                usuario.Direccion.Colonia.Municipio.Estado.IdEstado = Convert.ToInt32(row[25].ToString());
+                            }
+                            else
+                            {
+                                usuario.Direccion.Colonia.Municipio.Estado.IdEstado = 0;
+                            }                           
+                            usuario.Direccion.Colonia.Municipio.Estado.Nombre = row[26].ToString();
+
                             result.Objects.Add(usuario);
+
                         }
                         result.Correct = true;
-       
+
                     }
                     else
                     {
-                        result.Correct=false;
+                        result.Correct = false;
                         result.ErrorMessage = "No se encontraron registros";
                     }
                 }
             }
             catch (Exception ex)
             {
-                result.Correct=false;
-                result.ErrorMessage=ex.Message;
+                result.Correct = false;
+                result.ErrorMessage = ex.Message;
                 result.Ex = ex;
                 Console.WriteLine(ex.Message);
             }
@@ -343,28 +410,52 @@ namespace BL
 
                     if (dataTable.Rows.Count > 0)
                     {
-                                                 
-                        ML.Usuario usuario=new ML.Usuario();
+
+                        ML.Usuario usuario = new ML.Usuario();
                         usuario.Rol = new ML.Rol();
-                        DataRow row=dataTable.Rows[0];
-                            
-                            usuario.Nombre = (row[0].ToString());
-                            usuario.ApellidoPaterno = (row[1].ToString());
-                            usuario.ApellidoMaterno = (row[2].ToString());
-                            usuario.UserName = (row[3].ToString());
-                            usuario.Rol.IdRol = Convert.ToByte(row[4].ToString());
-                            usuario.Email = (row[5].ToString());
-                            usuario.Password = (row[6].ToString());
-                            usuario.FechaNacimiento = (row[7].ToString());
-                            usuario.Sexo = (row[8].ToString());
-                            usuario.Telefono = (row[9].ToString());
-                            usuario.Celular = (row[10].ToString());
-                            usuario.Estatus = Convert.ToBoolean(row[11].ToString());
-                            usuario.CURP = (row[12].ToString());
-                            usuario.Imagen = row[13].ToString() != "" ? (byte[])row[13] : null;
+                        usuario.Direccion = new ML.Direccion();
+                        DataRow row = dataTable.Rows[0];
+
+                        usuario.Nombre = (row[0].ToString());
+                        usuario.ApellidoPaterno = (row[1].ToString());
+                        usuario.ApellidoMaterno = (row[2].ToString());
+                        usuario.UserName = (row[3].ToString());
+                        usuario.Rol.IdRol = Convert.ToByte(row[4].ToString());
+                        usuario.Email = (row[5].ToString());
+                        usuario.Password = (row[6].ToString());
+                        usuario.FechaNacimiento = (row[7].ToString());
+                        usuario.Sexo = (row[8].ToString());
+                        usuario.Telefono = (row[9].ToString());
+                        usuario.Celular = (row[10].ToString());
+                        usuario.Estatus = Convert.ToBoolean(row[11].ToString());
+                        usuario.CURP = (row[12].ToString());
+                        usuario.Imagen = row[13].ToString() != "" ? (byte[])row[13] : null;
+                        
+                        if (row[14].ToString() != "")
+                        {
+                            usuario.Direccion.IdDireccion = Convert.ToInt32(row[14].ToString());
+                        }
+                        else
+                        {
+                            usuario.Direccion.IdDireccion = 0;
+                        }                                                                   
+                        usuario.Direccion.Calle = row[15].ToString();
+                        usuario.Direccion.NumeroInterior = row[16].ToString();
+                        usuario.Direccion.NumeroExterior = row[17].ToString();
+
+                        usuario.Direccion.Colonia = new ML.Colonia();
+                        usuario.Direccion.Colonia.IdColonia = row[18].ToString() != "" ? Convert.ToInt32(row[18].ToString()) : 0;
+                        //usuario.Direccion.Colonia.IdColonia = Convert.ToInt32(row[18].ToString());
+                        usuario.Direccion.Colonia.CodigoPostal = row[19].ToString();
+
+                        usuario.Direccion.Colonia.Municipio = new ML.Municipio();                       
+                        usuario.Direccion.Colonia.Municipio.IdMunicipio = row[20].ToString() != "" ? Convert.ToInt32(row[20].ToString()) : 0;
+
+
+                        usuario.Direccion.Colonia.Municipio.Estado = new ML.Estado();                       
+                        usuario.Direccion.Colonia.Municipio.Estado.IdEstado = row[21].ToString() != "" ? Convert.ToInt32(row[21].ToString()) : 0;
 
                         result.Object = usuario;
-                  
                         result.Correct = true;
 
                     }

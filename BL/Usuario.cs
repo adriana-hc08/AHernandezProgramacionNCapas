@@ -3,6 +3,7 @@ using ML;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Entity.Core.Objects;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Security.Cryptography;
@@ -475,7 +476,230 @@ namespace BL
             }
             return result;
         }
+        public static ML.Result GetAllEFSP()
+        {
+            ML.Result result = new ML.Result();
+            try
+            {
+                using (DL_EF.AHernandezProgramacionNCapasEntities contex = new DL_EF.AHernandezProgramacionNCapasEntities())
+                {
+                    var listaUsuarios=contex.UsuarioGetAll().ToList();
+                    if(listaUsuarios.Count > 0)
+                    {
+                        result.Objects = new List<object>();
+                        foreach(var usuarioDB in listaUsuarios)
+                        {
+                            ML.Usuario usuario = new ML.Usuario();
+                            usuario.Rol = new ML.Rol();
+                            usuario.Direccion = new ML.Direccion();
+                            usuario.Direccion.Colonia = new ML.Colonia();
+                            usuario.Direccion.Colonia.Municipio = new ML.Municipio();
+                            usuario.Direccion.Colonia.Municipio.Estado = new ML.Estado();
 
+                            usuario.IdUsuario = usuarioDB.IdUsuario;
+                            usuario.Nombre= usuarioDB.Nombre;
+                            usuario.ApellidoPaterno=usuarioDB.ApellidoPaterno;
+                            usuario.ApellidoMaterno = usuarioDB.ApellidoMaterno;
+                            usuario.UserName= usuarioDB.UserName;
+                            usuario.Rol.IdRol = usuarioDB.IdRol.Value;
+                            usuario.Rol.Nombre = usuarioDB.Rol;
+                            usuario.Email= usuarioDB.Email;
+                            usuario.Password= usuarioDB.Password;
+                            usuario.FechaNacimiento= usuarioDB.FechaNacimiento.ToString();
+                            usuario.Sexo= usuarioDB.Sexo;
+                            usuario.Telefono= usuarioDB.Telefono;
+                            usuario.Celular= usuarioDB.Celular;
+                            usuario.Estatus= usuarioDB.Estatus;
+                            usuario.CURP= usuarioDB.CURP;
+                            usuario.Imagen= usuarioDB.Imagen;
+                            usuario.Direccion.IdDireccion = usuarioDB.IdDireccion.Value;
+                            usuario.Direccion.Calle=usuarioDB.Calle;
+                            usuario.Direccion.NumeroInterior = usuarioDB.NumeroInterior;
+                            usuario.Direccion.NumeroExterior = usuarioDB.NumeroExterior;
+                            usuario.Direccion.Colonia.IdColonia=usuarioDB.IdColonia.Value;
+                            usuario.Direccion.Colonia.Nombre = usuarioDB.Colonia;
+                            usuario.Direccion.Colonia.Municipio.IdMunicipio = usuarioDB.IdMunicipio.Value;
+                            usuario.Direccion.Colonia.Municipio.Nombre = usuarioDB.Municipio;
+                            usuario.Direccion.Colonia.Municipio.Estado.IdEstado = usuarioDB.IdEstado.Value;
+                            usuario.Direccion.Colonia.Municipio.Estado.Nombre=usuarioDB.Estado;
+
+                            result.Objects.Add(usuario);
+                        }
+                        result.Correct = true;
+                    }
+                    else
+                    {
+                        result.Correct = false;
+                        result.ErrorMessage = "No se encontraron registros";
+                    }
+                }
+
+            }catch (Exception ex) 
+            {
+                result.Correct = false;
+                result.ErrorMessage = ex.Message;
+                result.Ex = ex;
+            }
+            return result;
+        }
+        public static ML.Result GetByIdEFSP(int IdUsuario)
+        {
+            ML.Result result = new ML.Result();
+            try
+            {
+                using (DL_EF.AHernandezProgramacionNCapasEntities contex = new DL_EF.AHernandezProgramacionNCapasEntities())
+                {
+                    var usuarioDB =contex.UsuarioGetById(IdUsuario).FirstOrDefault();
+                    if (usuarioDB!=null)
+                    {
+                       
+                            ML.Usuario usuario = new ML.Usuario();
+                            usuario.Rol = new ML.Rol();
+                            usuario.Direccion = new ML.Direccion();
+                            usuario.Direccion.Colonia = new ML.Colonia();
+                            usuario.Direccion.Colonia.Municipio = new ML.Municipio();
+                            usuario.Direccion.Colonia.Municipio.Estado = new ML.Estado();
+      
+                            usuario.Nombre = usuarioDB.Nombre;
+                            usuario.ApellidoPaterno = usuarioDB.ApellidoPaterno;
+                            usuario.ApellidoMaterno = usuarioDB.ApellidoMaterno;
+                            usuario.UserName = usuarioDB.UserName;
+                            usuario.Rol.IdRol = usuarioDB.IdRol.Value;
+                            
+                            usuario.Email = usuarioDB.Email;
+                            usuario.Password = usuarioDB.Password;
+                            usuario.FechaNacimiento = usuarioDB.FechaNacimiento.ToString();
+                            usuario.Sexo = usuarioDB.Sexo;
+                            usuario.Telefono = usuarioDB.Telefono;
+                            usuario.Celular = usuarioDB.Celular;
+                            usuario.Estatus = usuarioDB.Estatus;
+                            usuario.CURP = usuarioDB.CURP;
+                            usuario.Imagen = usuarioDB.Imagen;
+                            usuario.Direccion.IdDireccion = usuarioDB.IdDireccion.Value;
+                            usuario.Direccion.Calle = usuarioDB.Calle;
+                            usuario.Direccion.NumeroInterior = usuarioDB.NumeroInterior;
+                            usuario.Direccion.NumeroExterior = usuarioDB.NumeroExterior;
+                            usuario.Direccion.Colonia.IdColonia = usuarioDB.IdColonia.Value;
+                            
+                            usuario.Direccion.Colonia.Municipio.IdMunicipio = usuarioDB.IdMunicipio.Value;
+                            usuario.Direccion.Colonia.Municipio.Estado.IdEstado = usuarioDB.IdEstado.Value;
+                            
+
+                        
+                        result.Object = usuario;
+                        result.Correct = true;
+                    }
+                    else
+                    {
+                        result.Correct = false;
+                        result.ErrorMessage = "No se encontraron el usuario";
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                result.Correct = false;
+                result.ErrorMessage = ex.Message;
+                result.Ex = ex;
+            }
+            return result;
+        }
+        public static ML.Result AddEFSP(ML.Usuario usuario)
+        {
+            ML.Result result = new ML.Result();
+            try
+            {
+                using (DL_EF.AHernandezProgramacionNCapasEntities contex = new DL_EF.AHernandezProgramacionNCapasEntities())
+                {
+                    ObjectParameter idUsuario= new ObjectParameter("IdUsuario",typeof(int));
+                    var rowsAffected = contex.UsuarioAdd(usuario.Nombre, usuario.ApellidoPaterno,usuario.ApellidoMaterno,
+                        usuario.UserName,usuario.Rol.IdRol,usuario.Email, usuario.Password,usuario.FechaNacimiento,
+                        usuario.Sexo,usuario.Telefono,usuario.Celular,usuario.Estatus,usuario.CURP,usuario.Imagen,
+                        usuario.Direccion.IdDireccion);
+                    if (rowsAffected>0)
+                    {
+                        result.Correct = true;
+                    }
+                    else
+                    {
+                        result.Correct = false;
+                        result.ErrorMessage = "No se pudo agregar";
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                result.Correct = false;
+                result.ErrorMessage = ex.Message;
+                result.Ex = ex;
+            }
+            return result;
+        }
+        public static ML.Result UpdateEFSP(ML.Usuario usuario)
+        {
+            ML.Result result = new ML.Result();
+
+            try
+            {
+                using (DL_EF.AHernandezProgramacionNCapasEntities contex = new DL_EF.AHernandezProgramacionNCapasEntities())
+                {
+                    var rowsAffected = contex.UsuarioUpdate(usuario.IdUsuario, usuario.Nombre, usuario.ApellidoPaterno, usuario.ApellidoMaterno,
+                        usuario.UserName, usuario.Rol.IdRol, usuario.Email, usuario.Password, usuario.FechaNacimiento,
+                        usuario.Sexo, usuario.Telefono, usuario.Celular, usuario.Estatus, usuario.CURP, usuario.Imagen,
+                        usuario.Direccion.IdDireccion);
+
+                    if (rowsAffected > 0)
+                    {
+                        result.Correct = true;
+                    }
+                    else
+                    {
+                        result.Correct = false;
+                        result.ErrorMessage = "No se pudo actualizar el usuario";
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                result.Correct = false;
+                result.ErrorMessage = ex.Message;
+                result.Ex = ex;
+            }
+
+            return result;
+        }
+        public static ML.Result DeleteEFSP(int IdDireccion)
+        {
+            ML.Result result = new ML.Result();
+            try
+            {
+                using (DL_EF.AHernandezProgramacionNCapasEntities contex = new DL_EF.AHernandezProgramacionNCapasEntities())
+                {
+                    
+                    var rowsAffected = contex.UsuarioDelete(IdDireccion);
+                    if (rowsAffected > 0)
+                    {                       
+                        result.Correct = true;
+                    }
+                    else
+                    {
+                        result.Correct = false;
+                        result.ErrorMessage = "No se pudo eliminar al usuario";
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                result.Correct = false;
+                result.ErrorMessage = ex.Message;
+                result.Ex = ex;
+            }
+            return result;
+        }
     }
 }
 

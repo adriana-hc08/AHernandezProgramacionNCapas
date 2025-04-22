@@ -291,25 +291,7 @@ namespace DL_EF
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("UsuarioAdd", nombreParameter, apellidoPaternoParameter, apellidoMaternoParameter, userNameParameter, idRolParameter, emailParameter, passwordParameter, fechaNacimientoParameter, sexoParameter, telefonoParameter, celularParameter, estatusParameter, cURPParameter, imagenParameter, idDireccionParameter);
         }
     
-        public virtual int UsuarioDelete(Nullable<int> idUsuario, ObjectParameter idDireccion)
-        {
-            var idUsuarioParameter = idUsuario.HasValue ?
-                new ObjectParameter("IdUsuario", idUsuario) :
-                new ObjectParameter("IdUsuario", typeof(int));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("UsuarioDelete", idUsuarioParameter, idDireccion);
-        }
-    
-        public virtual ObjectResult<UsuarioGetById_Result> UsuarioGetById(Nullable<int> idUsuario)
-        {
-            var idUsuarioParameter = idUsuario.HasValue ?
-                new ObjectParameter("IdUsuario", idUsuario) :
-                new ObjectParameter("IdUsuario", typeof(int));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<UsuarioGetById_Result>("UsuarioGetById", idUsuarioParameter);
-        }
-    
-        public virtual int UsuarioUpdate(Nullable<int> idUsuario, string nombre, string apellidoPaterno, string apellidoMaterno, string userName, Nullable<byte> idRol, string email, string password, Nullable<System.DateTime> fechaNacimiento, string sexo, string telefono, string celular, Nullable<bool> estatus, string cURP, byte[] imagen, Nullable<int> idDireccion)
+        public virtual int UsuarioUpdate(Nullable<int> idUsuario, string nombre, string apellidoPaterno, string apellidoMaterno, string userName, Nullable<byte> idRol, string email, string password, string fechaNacimiento, string sexo, string telefono, string celular, Nullable<bool> estatus, string cURP, byte[] imagen, Nullable<int> idDireccion)
         {
             var idUsuarioParameter = idUsuario.HasValue ?
                 new ObjectParameter("IdUsuario", idUsuario) :
@@ -343,9 +325,9 @@ namespace DL_EF
                 new ObjectParameter("Password", password) :
                 new ObjectParameter("Password", typeof(string));
     
-            var fechaNacimientoParameter = fechaNacimiento.HasValue ?
+            var fechaNacimientoParameter = fechaNacimiento != null ?
                 new ObjectParameter("FechaNacimiento", fechaNacimiento) :
-                new ObjectParameter("FechaNacimiento", typeof(System.DateTime));
+                new ObjectParameter("FechaNacimiento", typeof(string));
     
             var sexoParameter = sexo != null ?
                 new ObjectParameter("Sexo", sexo) :
@@ -381,6 +363,24 @@ namespace DL_EF
         public virtual ObjectResult<UsuarioGetAll_Result> UsuarioGetAll()
         {
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<UsuarioGetAll_Result>("UsuarioGetAll");
+        }
+    
+        public virtual ObjectResult<UsuarioGetById_Result> UsuarioGetById(Nullable<int> idUsuario)
+        {
+            var idUsuarioParameter = idUsuario.HasValue ?
+                new ObjectParameter("IdUsuario", idUsuario) :
+                new ObjectParameter("IdUsuario", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<UsuarioGetById_Result>("UsuarioGetById", idUsuarioParameter);
+        }
+    
+        public virtual int UsuarioDelete(Nullable<int> idDireccion)
+        {
+            var idDireccionParameter = idDireccion.HasValue ?
+                new ObjectParameter("IdDireccion", idDireccion) :
+                new ObjectParameter("IdDireccion", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("UsuarioDelete", idDireccionParameter);
         }
     }
 }

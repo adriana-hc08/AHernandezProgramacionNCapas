@@ -72,6 +72,9 @@
     <Compile Include="ColoniaGetByIdMunicipio_Result.cs">
       <DependentUpon>AHernandezProgramacionNCapas.tt</DependentUpon>
     </Compile>
+    <Compile Include="ComplexType1.cs">
+      <DependentUpon>AHernandezProgramacionNCapas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Direccion.cs">
       <DependentUpon>AHernandezProgramacionNCapas.tt</DependentUpon>
     </Compile>

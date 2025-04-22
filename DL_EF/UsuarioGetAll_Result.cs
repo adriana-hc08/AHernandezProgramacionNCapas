@@ -22,7 +22,7 @@ namespace DL_EF
         public string Rol { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
-        public System.DateTime FechaNacimiento { get; set; }
+        public Nullable<System.DateTime> FechaNacimiento { get; set; }
         public string Sexo { get; set; }
         public string Telefono { get; set; }
         public string Celular { get; set; }

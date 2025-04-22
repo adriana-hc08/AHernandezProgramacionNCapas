@@ -78,7 +78,7 @@
                             </td>
                             <td>@usuario.Direccion.Calle</td>
                             <td>
-                                <a href="@Url.Action("Delete","Usuario", new {IdUsuario=usuario.IdUsuario})" onclick="alert('¡Esta seguro de eliminar este usuario!')">
+                                <a href="@Url.Action("Delete","Usuario", new {IdDireccion=usuario.Direccion.IdDireccion})" onclick="alert('¡Esta seguro de eliminar este usuario!')">
                                     <i class="bi bi-trash" style="font-size: 2em;"></i>
                                 </a>
                             </td>

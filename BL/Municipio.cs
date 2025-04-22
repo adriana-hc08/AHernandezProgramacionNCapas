@@ -55,6 +55,42 @@ namespace BL
             }
             return result;
         }
+        public static ML.Result GetByIdEstadoEFSP(int IdEstado)
+        {
+            ML.Result result = new ML.Result();
+            try
+            {
+                using (DL_EF.AHernandezProgramacionNCapasEntities contex = new DL_EF.AHernandezProgramacionNCapasEntities())
+                {
+                    var listaMunicipios = contex.MunicipioGetByIdEstado(IdEstado).ToList();
+                    if (listaMunicipios.Count > 0)
+                    {
+                        result.Objects = new List<object>();
+                        foreach (var municipiosDB in listaMunicipios)
+                        {
+                            ML.Municipio municipio = new ML.Municipio();
+                            municipio.IdMunicipio= municipiosDB.IdMunicipio;
+                            municipio.Nombre = municipiosDB.Nombre;
+                            result.Objects.Add(municipio);
+                        }
+                        result.Correct = true;
+                    }
+                    else
+                    {
+                        result.Correct = false;
+                        result.ErrorMessage = "No se encontraron el usuario";
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                result.Correct = false;
+                result.ErrorMessage = ex.Message;
+                result.Ex = ex;
+            }
+            return result;
+        }
     }
 }
 

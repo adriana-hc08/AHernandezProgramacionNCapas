@@ -56,5 +56,41 @@ namespace BL
             }
             return result;
         }
+        public static ML.Result RolGetAllEFSP()
+        {
+            ML.Result result = new ML.Result();
+            try
+            {
+                using (DL_EF.AHernandezProgramacionNCapasEntities contex = new DL_EF.AHernandezProgramacionNCapasEntities())
+                {
+                    var listaRoles = contex.RolGetAll().ToList();
+                    if (listaRoles.Count > 0)
+                    {
+                        result.Objects = new List<object>();
+                        foreach (var rolDB in listaRoles)
+                        {
+                            ML.Rol rol = new ML.Rol();
+                            rol.IdRol = rolDB.IdRol;
+                            rol.Nombre=rolDB.Nombre;
+                            result.Objects.Add(rol);
+                        }
+                        result.Correct=true;
+                    }
+                    else
+                    {
+                        result.Correct = false;
+                        result.ErrorMessage= "No se encontraron registros";
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                result.Correct= false;
+                result.ErrorMessage = ex.Message;
+                result.Ex = ex;
+            }
+            return result;
+        }
     }
 }

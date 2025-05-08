@@ -6,6 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ML;
+using DL_EF;
+using System.Runtime.Remoting.Contexts;
 
 namespace BL
 {
@@ -88,6 +90,48 @@ namespace BL
                 result.Correct = false;
                 result.ErrorMessage = ex.Message;
                 result.Ex = ex;
+            }
+            return result;
+        }
+        public static ML.Result GetAllLINQ()
+        {
+            Result result = new ML.Result();
+            try
+            {
+                using (AHernandezProgramacionNCapasEntities contex = new AHernandezProgramacionNCapasEntities())
+                {
+                    var listEstados = (from estadoDB in contex.Estadoes
+                                      
+                                        select new
+                                        {
+                                            IdEstado = estadoDB.IdEstado,
+                                            Nombre = estadoDB.Nombre
+                                            
+                                        });
+                    result.Objects = new List<object>();
+                    if (listEstados != null && listEstados.ToList().Count > 0)
+                    {
+                        foreach (var obj in listEstados)
+                        {
+                            ML.Estado estado = new ML.Estado();
+                            estado.IdEstado = obj.IdEstado;
+                            estado.Nombre= obj.Nombre;
+
+                            result.Objects.Add(estado);
+                        }
+                        result.Correct = true;
+                    }
+                    else
+                    {
+                        result.Correct = false;
+                        result.ErrorMessage = "No se encontraron registros";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Correct = false;
+                result.ErrorMessage = ex.Message;
             }
             return result;
         }

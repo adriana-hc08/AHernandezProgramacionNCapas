@@ -5,6 +5,8 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DL_EF;
+using ML;
 
 namespace BL
 {
@@ -89,6 +91,50 @@ namespace BL
                 result.Correct= false;
                 result.ErrorMessage = ex.Message;
                 result.Ex = ex;
+            }
+            return result;
+        }
+        public static ML.Result GetAllRolLINQ()
+        {
+            Result result = new ML.Result();
+            try
+            {
+                using (AHernandezProgramacionNCapasEntities contex = new AHernandezProgramacionNCapasEntities())
+                {
+                    var listRoles = (from rolDB in contex.Rols
+
+                                       select new
+                                       {
+                                           IdRol = rolDB.IdRol,
+                                           Nombre = rolDB.Nombre
+
+                                       }).ToList();
+
+                    if (listRoles != null && listRoles.Count > 0)
+                    {
+                        result.Objects = new List<object>();
+
+                        foreach (var obj in listRoles)
+                        {
+                            ML.Rol rol = new ML.Rol();
+                            rol.IdRol = obj.IdRol;
+                            rol.Nombre = obj.Nombre;
+
+                            result.Objects.Add(rol);
+                            
+                        }
+                        result.Correct = true;
+                    }
+                    else
+                    {
+                        result.Correct = false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Correct = false;
+                result.ErrorMessage = ex.Message;
             }
             return result;
         }

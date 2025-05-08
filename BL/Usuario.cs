@@ -1,11 +1,15 @@
-﻿using Microsoft.SqlServer.Server;
+﻿using DL_EF;
+using Microsoft.SqlServer.Server;
 using ML;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Data.Entity.Core.Objects;
 using System.Data.SqlClient;
+using System.Globalization;
 using System.Linq;
+using System.Runtime.Remoting.Contexts;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -309,7 +313,7 @@ namespace BL
                             usuario.Email = (row[7].ToString());
                             usuario.Password = (row[8].ToString());
                             usuario.FechaNacimiento = (row[9].ToString());
-                            usuario.Sexo = (row[10].ToString());
+                            usuario.Sexo = Convert.ToChar(row[10].ToString());
                             usuario.Telefono = (row[11].ToString());
                             usuario.Celular = (row[12].ToString());
                             usuario.Estatus = Convert.ToBoolean(row[13].ToString());
@@ -425,7 +429,7 @@ namespace BL
                         usuario.Email = (row[5].ToString());
                         usuario.Password = (row[6].ToString());
                         usuario.FechaNacimiento = (row[7].ToString());
-                        usuario.Sexo = (row[8].ToString());
+                        usuario.Sexo = Convert.ToChar(row[8].ToString());
                         usuario.Telefono = (row[9].ToString());
                         usuario.Celular = (row[10].ToString());
                         usuario.Estatus = Convert.ToBoolean(row[11].ToString());
@@ -506,21 +510,21 @@ namespace BL
                             usuario.Email= usuarioDB.Email;
                             usuario.Password= usuarioDB.Password;
                             usuario.FechaNacimiento= usuarioDB.FechaNacimiento.ToString();
-                            usuario.Sexo= usuarioDB.Sexo;
+                            usuario.Sexo= usuarioDB.Sexo[0];
                             usuario.Telefono= usuarioDB.Telefono;
                             usuario.Celular= usuarioDB.Celular;
                             usuario.Estatus= usuarioDB.Estatus;
                             usuario.CURP= usuarioDB.CURP;
                             usuario.Imagen= usuarioDB.Imagen;
-                            usuario.Direccion.IdDireccion = usuarioDB.IdDireccion.Value;
+                            usuario.Direccion.IdDireccion = usuarioDB.IdDireccion;
                             usuario.Direccion.Calle=usuarioDB.Calle;
                             usuario.Direccion.NumeroInterior = usuarioDB.NumeroInterior;
                             usuario.Direccion.NumeroExterior = usuarioDB.NumeroExterior;
-                            usuario.Direccion.Colonia.IdColonia=usuarioDB.IdColonia.Value;
+                            usuario.Direccion.Colonia.IdColonia=usuarioDB.IdColonia;
                             usuario.Direccion.Colonia.Nombre = usuarioDB.Colonia;
-                            usuario.Direccion.Colonia.Municipio.IdMunicipio = usuarioDB.IdMunicipio.Value;
+                            usuario.Direccion.Colonia.Municipio.IdMunicipio = usuarioDB.IdMunicipio;
                             usuario.Direccion.Colonia.Municipio.Nombre = usuarioDB.Municipio;
-                            usuario.Direccion.Colonia.Municipio.Estado.IdEstado = usuarioDB.IdEstado.Value;
+                            usuario.Direccion.Colonia.Municipio.Estado.IdEstado = usuarioDB.IdEstado;
                             usuario.Direccion.Colonia.Municipio.Estado.Nombre=usuarioDB.Estado;
 
                             result.Objects.Add(usuario);
@@ -568,8 +572,8 @@ namespace BL
                             
                             usuario.Email = usuarioDB.Email;
                             usuario.Password = usuarioDB.Password;
-                            usuario.FechaNacimiento = usuarioDB.FechaNacimiento.ToString();
-                            usuario.Sexo = usuarioDB.Sexo;
+                            usuario.FechaNacimiento = usuarioDB.FechaNacimiento.Value.ToString("dd-MM-yyyy");
+                            usuario.Sexo = usuarioDB.Sexo[0];
                             usuario.Telefono = usuarioDB.Telefono;
                             usuario.Celular = usuarioDB.Celular;
                             usuario.Estatus = usuarioDB.Estatus;
@@ -615,7 +619,7 @@ namespace BL
                     ObjectParameter idUsuario= new ObjectParameter("IdUsuario",typeof(int));
                     var rowsAffected = contex.UsuarioAdd(usuario.Nombre, usuario.ApellidoPaterno,usuario.ApellidoMaterno,
                         usuario.UserName,usuario.Rol.IdRol,usuario.Email, usuario.Password,usuario.FechaNacimiento,
-                        usuario.Sexo,usuario.Telefono,usuario.Celular,usuario.Estatus,usuario.CURP,usuario.Imagen,
+                        usuario.Sexo.ToString(),usuario.Telefono,usuario.Celular,usuario.Estatus,usuario.CURP,usuario.Imagen,
                         usuario.Direccion.IdDireccion);
                     if (rowsAffected>0)
                     {
@@ -647,7 +651,7 @@ namespace BL
                 {
                     var rowsAffected = contex.UsuarioUpdate(usuario.IdUsuario, usuario.Nombre, usuario.ApellidoPaterno, usuario.ApellidoMaterno,
                         usuario.UserName, usuario.Rol.IdRol, usuario.Email, usuario.Password, usuario.FechaNacimiento,
-                        usuario.Sexo, usuario.Telefono, usuario.Celular, usuario.Estatus, usuario.CURP, usuario.Imagen,
+                        usuario.Sexo.ToString(), usuario.Telefono, usuario.Celular, usuario.Estatus, usuario.CURP, usuario.Imagen,
                         usuario.Direccion.IdDireccion);
 
                     if (rowsAffected > 0)
@@ -698,6 +702,448 @@ namespace BL
                 result.ErrorMessage = ex.Message;
                 result.Ex = ex;
             }
+            return result;
+        }
+        public static ML.Result AddLINQ(ML.Usuario usuario)
+        {
+            Result result = new ML.Result();
+            try
+            {
+                using(AHernandezProgramacionNCapasEntities contex =new AHernandezProgramacionNCapasEntities())
+                {
+                    DL_EF.Usuario usuarioDL=new DL_EF.Usuario();
+                    usuarioDL.Nombre = usuario.Nombre;
+                    usuarioDL.ApellidoPaterno=usuario.ApellidoPaterno;
+                    usuarioDL.ApellidoMaterno = usuario.ApellidoMaterno;
+                    usuarioDL.UserName= usuario.UserName;
+                    usuarioDL.IdRol = usuario.Rol.IdRol;
+                    usuarioDL.Email= usuario.Email;
+                    usuarioDL.Password= usuario.Password;
+                    usuarioDL.FechaNacimiento= DateTime.ParseExact(usuario.FechaNacimiento, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+                    usuarioDL.Sexo=usuario.Sexo.ToString();
+                    usuarioDL.Telefono=usuario.Telefono;
+                    usuarioDL.Celular=usuario.Celular;
+                    usuarioDL.Estatus=usuario.Estatus;
+                    usuarioDL.CURP=usuario.CURP;
+                    usuarioDL.Imagen=usuario.Imagen;
+                    usuarioDL.IdDireccion = usuario.Direccion.IdDireccion;
+
+                    contex.Usuarios.Add(usuarioDL);
+                    contex.SaveChanges();
+                    result.Correct = true;
+                }
+            }
+            catch(Exception ex)
+            {
+                result.Correct = false;
+                result.ErrorMessage=ex.Message;
+            }
+            return result;
+        }
+        public static ML.Result UpdateLINQ(ML.Usuario usuario)
+        {
+            Result result = new ML.Result();
+            try
+            {
+                using (AHernandezProgramacionNCapasEntities contex = new AHernandezProgramacionNCapasEntities())
+                {
+                    var query =(from a in contex.Usuarios where a.IdUsuario==usuario.IdUsuario
+                                select a).SingleOrDefault();
+                    if (query != null)
+                    {
+                        query.Nombre = usuario.Nombre;
+                        query.ApellidoPaterno = usuario.ApellidoPaterno;
+                        query.ApellidoMaterno = usuario.ApellidoMaterno;
+                        query.UserName = usuario.UserName;
+                        query.IdRol = usuario.Rol.IdRol;
+                        query.Email = usuario.Email;
+                        query.Password = usuario.Password;
+                        query.FechaNacimiento = DateTime.ParseExact(usuario.FechaNacimiento, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+                        query.Sexo = usuario.Sexo.ToString();
+                        query.Telefono = usuario.Telefono;
+                        query.Celular = usuario.Celular;
+                        query.Estatus = usuario.Estatus;
+                        query.CURP = usuario.CURP;
+                        query.Imagen = usuario.Imagen;
+                        query.IdDireccion = usuario.Direccion.IdDireccion;
+                        contex.SaveChanges();
+                        result.Correct=true; 
+                    }
+                                     
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Correct = false;
+                result.ErrorMessage = ex.Message;
+            }
+            return result;
+        }
+        public static ML.Result DeleteLINQ(int IdDIreccion)
+        {
+            Result result = new ML.Result();
+            try
+            {
+                using(AHernandezProgramacionNCapasEntities contex=new AHernandezProgramacionNCapasEntities())
+                {
+                    var query = (from a in contex.Usuarios
+                                 where a.IdDireccion == IdDIreccion
+                                 select a).First();
+                    contex.Usuarios.Remove(query);
+                    contex.SaveChanges();
+                    result.Correct=true; 
+                }
+            }catch (Exception ex)
+            {
+                result.Correct = false;
+                result.ErrorMessage = ex.Message;
+            }
+            return result;
+        }
+        public static ML.Result GetAllEFLinq()
+        {
+            Result result = new ML.Result();
+            try
+            {
+                using (AHernandezProgramacionNCapasEntities contex = new AHernandezProgramacionNCapasEntities())
+                {
+                    var listUsuarios = (from usuarioDB in contex.Usuarios
+                                        join rolDB in contex.Rols on usuarioDB.IdRol equals rolDB.IdRol
+                                        join direccionDB in contex.Direccions on usuarioDB.IdDireccion equals direccionDB.IdDireccion
+                                        join coloniaDB in contex.Colonias on direccionDB.IdColonia equals coloniaDB.IdColonia
+                                        join municipioDB in contex.Municipios on coloniaDB.IdMunicipio equals municipioDB.IdMunicipio
+                                        join estadoDB in contex.Estadoes on municipioDB.IdEstado equals estadoDB.IdEstado
+                                        select new
+                                        {
+                                            IdUsuario= usuarioDB.IdUsuario,
+                                            Nombre=usuarioDB.Nombre,
+                                            ApellidoPaterno=usuarioDB.ApellidoPaterno,
+                                            ApellidoMaterno=usuarioDB.ApellidoMaterno,
+                                            UserName=usuarioDB.UserName,
+                                            IdRol= rolDB.IdRol,
+                                            Rol=rolDB.Nombre,
+                                            Email=usuarioDB.Email,
+                                            Password=usuarioDB.Password,
+                                            FechaNacimiento=usuarioDB.FechaNacimiento,
+                                            Sexo=usuarioDB.Sexo,
+                                            Telefono=usuarioDB.Telefono,
+                                            Celular=usuarioDB.Celular,
+                                            Estatus=usuarioDB.Estatus,
+                                            CURP=usuarioDB.CURP,
+                                            Imagen=usuarioDB.Imagen,
+                                            IdDirecccion=usuarioDB.Direccion.IdDireccion,
+                                            Calle=usuarioDB.Direccion.Calle,
+                                            NumeroInterior=usuarioDB.Direccion.NumeroInterior,
+                                            NumeroExterior=usuarioDB.Direccion.NumeroInterior,
+                                            IdColonia=usuarioDB.Direccion.Colonia.IdColonia,
+                                            Colonia=usuarioDB.Direccion.Colonia.Nombre,
+                                            IdMunicipio=usuarioDB.Direccion.Colonia.Municipio.IdMunicipio,
+                                            Municipio = usuarioDB.Direccion.Colonia.Municipio.Nombre,
+                                            IdEstado = usuarioDB.Direccion.Colonia.Municipio.Estado.IdEstado,
+                                            Estado = usuarioDB.Direccion.Colonia.Municipio.Estado.Nombre,
+
+                                        }).ToList();
+                    if (listUsuarios !=null && listUsuarios.Count > 0)
+                    {
+                        result.Objects = new List<object>();
+
+                        foreach (var obj in listUsuarios)
+                        {
+                            ML.Usuario usuario = new ML.Usuario();
+                            usuario.Rol=new ML.Rol();
+                            usuario.Direccion = new ML.Direccion();
+                            usuario.Direccion.Colonia= new ML.Colonia();
+                            usuario.Direccion.Colonia.Municipio=new ML.Municipio();
+                            usuario.Direccion.Colonia.Municipio.Estado=new ML.Estado();
+                            usuario.IdUsuario = obj.IdUsuario;
+                            usuario.Nombre=obj.Nombre;
+                            usuario.ApellidoPaterno= obj.ApellidoPaterno;
+                            usuario.ApellidoMaterno= obj.ApellidoMaterno;
+                            usuario.UserName= obj.UserName;                
+                            usuario.Rol.IdRol = obj.IdRol;
+                            usuario.Rol.Nombre = obj.Rol;
+                            usuario.Email=obj.Email;
+                            usuario.Password= obj.Password;
+                            usuario.FechaNacimiento = (obj.FechaNacimiento).ToString("dd-MM-yyyy");
+                            usuario.Sexo= obj.Sexo[0];
+                            usuario.Telefono= obj.Telefono;
+                            usuario.Celular= obj.Celular;
+                            usuario.Estatus= obj.Estatus;
+                            usuario.CURP= obj.CURP;
+                            usuario.Imagen= obj.Imagen;
+                            usuario.Direccion.IdDireccion = obj.IdDirecccion;
+                            usuario.Direccion.Calle= obj.Calle;
+                            usuario.Direccion.NumeroInterior= obj.NumeroInterior;
+                            usuario.Direccion.NumeroExterior= obj.NumeroExterior;
+                            usuario.Direccion.Colonia.IdColonia = obj.IdColonia;
+                            usuario.Direccion.Colonia.Nombre=obj.Colonia;
+                            usuario.Direccion.Colonia.Municipio.IdMunicipio = obj.IdMunicipio;
+                            usuario.Direccion.Colonia.Municipio.Nombre = obj.Municipio;
+                            usuario.Direccion.Colonia.Municipio.Estado.IdEstado= obj.IdEstado;
+                            usuario.Direccion.Colonia.Municipio.Estado.Nombre = obj.Estado;
+
+
+                            result.Objects.Add(usuario);
+                        }
+                        result.Correct = true;
+                    }
+                    else
+                    {
+                        result.Correct = false;
+                        result.ErrorMessage = "No se encontraron registros";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Correct = false;
+                result.ErrorMessage = ex.Message;
+            }
+            return result;
+        }
+        public static ML.Result GetByIdEFLinq(int IdUsuario)
+        {
+            ML.Result result = new ML.Result();
+            try
+            {
+                using (AHernandezProgramacionNCapasEntities contex = new AHernandezProgramacionNCapasEntities())
+                {
+                    var usuariobyid = (from usuarioDB in contex.Usuarios
+                                         join rolDB in contex.Rols on usuarioDB.IdRol equals rolDB.IdRol 
+                                        
+                                        join direccionDB in contex.Direccions on usuarioDB.IdDireccion equals direccionDB.IdDireccion
+                                        join coloniaDB in contex.Colonias on direccionDB.IdColonia equals coloniaDB.IdColonia
+                                        join municipioDB in contex.Municipios on coloniaDB.IdMunicipio equals municipioDB.IdMunicipio
+                                        join estadoDB in contex.Estadoes on municipioDB.IdEstado equals estadoDB.IdEstado
+                                        where usuarioDB.IdUsuario== IdUsuario
+                                        select new
+                                        {
+                                            IdUsuario = usuarioDB.IdUsuario,
+                                            Nombre = usuarioDB.Nombre,
+                                            ApellidoPaterno = usuarioDB.ApellidoPaterno,
+                                            ApellidoMaterno = usuarioDB.ApellidoMaterno,
+                                            UserName = usuarioDB.UserName,
+                                            IdRol = rolDB.IdRol,
+                                            Rol = rolDB.Nombre,
+                                            Email = usuarioDB.Email,
+                                            Password = usuarioDB.Password,
+                                            FechaNacimiento = usuarioDB.FechaNacimiento,
+                                            Sexo = usuarioDB.Sexo,
+                                            Telefono = usuarioDB.Telefono,
+                                            Celular = usuarioDB.Celular,
+                                            Estatus = usuarioDB.Estatus,
+                                            CURP = usuarioDB.CURP,
+                                            Imagen = usuarioDB.Imagen,
+                                            IdDirecccion = usuarioDB.Direccion.IdDireccion,
+                                            Calle = usuarioDB.Direccion.Calle,
+                                            NumeroInterior = usuarioDB.Direccion.NumeroInterior,
+                                            NumeroExterior = usuarioDB.Direccion.NumeroInterior,
+                                            IdColonia = usuarioDB.Direccion.Colonia.IdColonia,
+                                            Colonia = usuarioDB.Direccion.Colonia.Nombre,
+                                            IdMunicipio = usuarioDB.Direccion.Colonia.Municipio.IdMunicipio,
+                                            Municipio = usuarioDB.Direccion.Colonia.Municipio.Nombre,
+                                            IdEstado = usuarioDB.Direccion.Colonia.Municipio.Estado.IdEstado,
+                                            Estado = usuarioDB.Direccion.Colonia.Municipio.Estado.Nombre,
+
+                                        }).SingleOrDefault();
+                    if (usuariobyid != null )
+                    {
+                        result.Objects = new List<object>();
+
+                        
+                            ML.Usuario usuario = new ML.Usuario();
+                            usuario.Rol=new ML.Rol();
+                            usuario.Direccion = new ML.Direccion();
+                            usuario.Direccion.Colonia= new ML.Colonia();
+                            usuario.Direccion.Colonia.Municipio=new ML.Municipio();
+                            usuario.Direccion.Colonia.Municipio.Estado=new ML.Estado();
+                            usuario.IdUsuario = usuariobyid.IdUsuario;
+                            usuario.Nombre= usuariobyid.Nombre;
+                            usuario.ApellidoPaterno= usuariobyid.ApellidoPaterno;
+                            usuario.ApellidoMaterno= usuariobyid.ApellidoMaterno;
+                            usuario.UserName= usuariobyid.UserName;                
+                            usuario.Rol.IdRol = usuariobyid.IdRol;
+                            usuario.Email=usuariobyid.Email;
+                            usuario.Password= usuariobyid.Password;
+                            usuario.FechaNacimiento = (usuariobyid.FechaNacimiento).ToString("dd-MM-yyyy");
+                            usuario.Sexo= usuariobyid.Sexo[0];
+                            usuario.Telefono= usuariobyid.Telefono;
+                            usuario.Celular= usuariobyid.Celular;
+                            usuario.Estatus= usuariobyid.Estatus;
+                            usuario.CURP= usuariobyid.CURP;
+                            usuario.Imagen= usuariobyid.Imagen;
+                            usuario.Direccion.IdDireccion = usuariobyid.IdDirecccion;
+                            usuario.Direccion.Calle= usuariobyid.Calle;
+                            usuario.Direccion.NumeroInterior= usuariobyid.NumeroInterior;
+                            usuario.Direccion.NumeroExterior= usuariobyid.NumeroExterior;
+                            usuario.Direccion.Colonia.IdColonia = usuariobyid.IdColonia;
+                            usuario.Direccion.Colonia.Nombre= usuariobyid.Colonia;
+                            usuario.Direccion.Colonia.Municipio.IdMunicipio = usuariobyid.IdMunicipio;
+                            usuario.Direccion.Colonia.Municipio.Nombre = usuariobyid.Municipio;
+                            usuario.Direccion.Colonia.Municipio.Estado.IdEstado= usuariobyid.IdEstado;
+                            usuario.Direccion.Colonia.Municipio.Estado.Nombre = usuariobyid.Estado;
+                            result.Object= usuario; 
+                        
+                        result.Correct = true;
+                    }
+                    else
+                    {
+                       result.Correct = false;
+                       result.ErrorMessage = "No se encontraron registros";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Correct = false;
+                result.ErrorMessage = ex.Message;
+            }
+          return result;
+        }
+        public static ML.Result GetByIdUsernameEFLinq(string UserName)
+        {
+            ML.Result result = new ML.Result();
+            try
+            {
+                using (AHernandezProgramacionNCapasEntities contex = new AHernandezProgramacionNCapasEntities())
+                {
+                    var username = (from usuarioDB in contex.Usuarios
+                                    where usuarioDB.UserName== UserName
+                                    select usuarioDB).FirstOrDefault();
+                    if (username != null)
+                    {
+                        result.Object = username;
+                        result.Correct = true;
+                        result.ErrorMessage = "El username ya existe";
+                    }
+                    else
+                    {
+                        result.Correct = false;
+                        result.ErrorMessage = "No se encontraron registros";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Correct = false;
+                result.ErrorMessage = ex.Message;
+            }
+            return result;
+        }
+        public static ML.Result GetByIdEmailEFLinq(string Email)
+        {
+            ML.Result result = new ML.Result();
+            try
+            {
+                using (AHernandezProgramacionNCapasEntities contex = new AHernandezProgramacionNCapasEntities())
+                {
+                    var correo = (from usuarioDB in contex.Usuarios
+                                 where usuarioDB.Email == Email
+                                 select usuarioDB).FirstOrDefault();
+                    if (correo != null)
+                    {
+                        result.Object = correo;
+                        result.Correct = true;
+                        result.ErrorMessage = "El Email ya existe";
+                    }else
+                    {
+                        result.Correct = false;
+                    }
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                result.Correct = false;
+                result.ErrorMessage = ex.Message;
+            }
+            return result;
+        }
+        public static ML.Result GetByIdCURPEFLinq(string CURP)
+        {
+            ML.Result result = new ML.Result();
+            try
+            {
+                using (AHernandezProgramacionNCapasEntities contex = new AHernandezProgramacionNCapasEntities())
+                {
+                    var curp= (from usuarioDB in contex.Usuarios
+                               where usuarioDB.CURP== CURP
+                               select usuarioDB).FirstOrDefault();
+                    if (curp!= null)
+                    {
+                       result.Object= curp;
+                       result.Correct = true;
+                        result.ErrorMessage = "La CURP ya existe";
+                    }
+                    else
+                    {
+                        result.Correct = false;
+                        result.ErrorMessage = "No se encontraron registros";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Correct = false;
+                result.ErrorMessage = ex.Message;
+            }
+            return result;
+        }
+        public static ML.Result UpdateEstatus(ML.Usuario usuario)
+        {
+            Result result = new ML.Result();
+            try
+            {
+                using (AHernandezProgramacionNCapasEntities contex = new AHernandezProgramacionNCapasEntities())
+                {
+                    var query = (from a in contex.Usuarios
+                                 where a.IdUsuario == usuario.IdUsuario
+                                 select a).SingleOrDefault();
+                    if (query != null)
+                    {                       
+                        query.Estatus = usuario.Estatus;                        
+                        contex.SaveChanges();
+                        result.Correct = true;
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Correct = false;
+                result.ErrorMessage = ex.Message;
+            }
+            return result;
+        }
+        public static ML.Result UpdateEstatusEFSP(int IdUsuario,bool Estatus)
+        {
+            ML.Result result = new ML.Result();
+
+            try
+            {
+                using (DL_EF.AHernandezProgramacionNCapasEntities contex = new DL_EF.AHernandezProgramacionNCapasEntities())
+                {
+                    var rowsAffected = contex.ActualizarEstatus(IdUsuario,Estatus);
+
+                    if (rowsAffected > 0)
+                    {
+                        result.Correct = true;
+                    }
+                    else
+                    {
+                        result.Correct = false;
+                        result.ErrorMessage = "No se pudo actualizar el usuario";
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                result.Correct = false;
+                result.ErrorMessage = ex.Message;
+                result.Ex = ex;
+            }
+
             return result;
         }
     }

@@ -19,7 +19,7 @@
             <hr />
         </div>
     </div>
-    @using (Html.BeginForm("Formulario", "Usuario", FormMethod.Post, new { enctype = "multipart/form-data", @class = "row g-3 needs-validation", novalidate = "novalidate" }))
+    @using (Html.BeginForm("Formulario", "Usuario", FormMethod.Post, new { enctype = "multipart/form-data", @class = "row g-3 needs-validation", novalidate = "novalidate",@Id="usuarioForm" }))
     {
         <div class="row">
             <div class="col-4 ">
@@ -221,7 +221,7 @@
                     <div class="input-group-text">
                         <i class="bi bi-card-text" style="font-size: 1em; color: #ff00ff"></i>
                     </div>
-                    @Html.TextBoxFor(model => model.Direccion.NumeroInterior, new { @class = "form-control" })
+                    @Html.TextBoxFor(model => model.Direccion.NumeroInterior, new { @class = "form-control", required = "required" })
                 </div>
             </div>
             <div class="col-4">
@@ -340,8 +340,8 @@
                 if (result.Correct) {
                     $("#ddlMunicipio").empty();
                     $("#ddlColonia").empty();
-                    $("#ddlMunicipio").append('<option value="0">' + 'Selecione un Municipio' + '</option>');
-                    $("#ddlColonia").append('<option value="0">' + 'Selecione una Colonia' + '</option>');
+                    $("#ddlMunicipio").append('<option value="">' + 'Selecione un Municipio' + '</option>');
+                    $("#ddlColonia").append('<option value="">' + 'Selecione una Colonia' + '</option>');
 
                     $.each(result.Objects, function (i, municipios) {
                         $("#ddlMunicipio").append('<option value="'
@@ -371,7 +371,7 @@
             success: function (result) {
                 if (result.Correct) {
                     $("#ddlColonia").empty();
-                    $("#ddlColonia").append('<option value="0">' + 'Selecione una Colonia' + '</option>');
+                    $("#ddlColonia").append('<option value="">' + 'Selecione una Colonia' + '</option>');
 
                     $.each(result.Objects, function (i, colonias) {
                         $("#ddlColonia").append('<option value="'

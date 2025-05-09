@@ -15,22 +15,56 @@ namespace PL_MVC.Controllers
     public class UsuarioController : Controller
     {
         // GET: Usuario
+        [HttpGet]
         public ActionResult GetAll()
         {
             ML.Usuario usuario = new ML.Usuario();
-
+            usuario.Nombre = "";
+            usuario.ApellidoPaterno = "";
+            usuario.ApellidoMaterno = "";
             usuario.Rol=new ML.Rol();
-            //ML.Result resultDirec=BL.Direccion.Di
+            usuario.Rol.IdRol = 0;
+           
 
             ML.Result resultRol=BL.Rol.RolGetAllEFSP();
+            if (resultRol.Correct == true)
+            {
+                usuario.Rol.Roles = resultRol.Objects;
+            }
+            else
+            {
+                usuario.Rol.Roles = new List<object>();
+            }
+            
 
-            ML.Result result = BL.Usuario.GetAllEFSP();
+            ML.Result result = BL.Usuario.GetAllEFSP(usuario.Nombre, usuario.ApellidoPaterno, usuario.ApellidoMaterno, usuario.Rol.IdRol);
 
             if (result.Correct)
             {
                 usuario.Usuarios = result.Objects;
             }
          
+            return View(usuario);
+        }
+        [HttpPost]
+        public ActionResult GetAll(ML.Usuario usuario)
+        {
+            usuario.Nombre = usuario.Nombre == null ? "" : usuario.Nombre;
+            usuario.ApellidoPaterno = usuario.ApellidoPaterno == null ? "" : usuario.ApellidoPaterno;
+            usuario.ApellidoMaterno = usuario.ApellidoMaterno == null ? "" : usuario.ApellidoMaterno;
+
+            ML.Result resultRol = BL.Rol.RolGetAllEFSP();
+            ML.Result resultUsuario=BL.Usuario.GetAllEFSP(usuario.Nombre,usuario.ApellidoPaterno,usuario.ApellidoMaterno,usuario.Rol.IdRol);
+
+            if (resultRol.Correct == true)
+            {
+                usuario.Rol.Roles = resultRol.Objects;
+            }
+            else
+            {
+                usuario.Rol.Roles = new List<object>();
+            }
+            usuario.Usuarios=resultUsuario.Objects;
             return View(usuario);
         }
         [HttpGet]
@@ -80,7 +114,7 @@ namespace PL_MVC.Controllers
             ML.Result result=new ML.Result();
             ML.Direccion direccion= new ML.Direccion();
 
-            if(imgUsuarioInput!=null)
+            if (imgUsuarioInput!=null)
             {
                 MemoryStream target = new MemoryStream();
                 imgUsuarioInput.InputStream.CopyTo(target);

@@ -29,16 +29,16 @@ namespace DL_EF
         public bool Estatus { get; set; }
         public string CURP { get; set; }
         public byte[] Imagen { get; set; }
-        public Nullable<int> IdDireccion { get; set; }
+        public int IdDireccion { get; set; }
         public string Calle { get; set; }
         public string NumeroInterior { get; set; }
         public string NumeroExterior { get; set; }
-        public Nullable<int> IdColonia { get; set; }
+        public int IdColonia { get; set; }
         public string Colonia { get; set; }
         public string CodigoPostal { get; set; }
-        public Nullable<int> IdMunicipio { get; set; }
+        public int IdMunicipio { get; set; }
         public string Municipio { get; set; }
-        public Nullable<int> IdEstado { get; set; }
+        public int IdEstado { get; set; }
         public string Estado { get; set; }
     }
 }

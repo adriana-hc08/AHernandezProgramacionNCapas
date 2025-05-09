@@ -1,4 +1,5 @@
-﻿using Microsoft.SqlServer.Server;
+﻿using DL_EF;
+using Microsoft.SqlServer.Server;
 using ML;
 using System;
 using System.Collections.Generic;
@@ -476,14 +477,14 @@ namespace BL
             }
             return result;
         }
-        public static ML.Result GetAllEFSP()
+        public static ML.Result GetAllEFSP(string nombre,string apellidoPaterno,string apellidoMaterno,byte? idRol)
         {
             ML.Result result = new ML.Result();
             try
             {
                 using (DL_EF.AHernandezProgramacionNCapasEntities contex = new DL_EF.AHernandezProgramacionNCapasEntities())
                 {
-                    var listaUsuarios=contex.UsuarioGetAll().ToList();
+                    var listaUsuarios=contex.UsuarioGetAll(nombre,apellidoPaterno,apellidoMaterno,idRol).ToList();
                     if(listaUsuarios.Count > 0)
                     {
                         result.Objects = new List<object>();
@@ -505,22 +506,22 @@ namespace BL
                             usuario.Rol.Nombre = usuarioDB.Rol;
                             usuario.Email= usuarioDB.Email;
                             usuario.Password= usuarioDB.Password;
-                            usuario.FechaNacimiento= usuarioDB.FechaNacimiento.ToString();
+                            usuario.FechaNacimiento= usuarioDB.FechaNacimiento.Value.ToString("dd-MM-yyyy");
                             usuario.Sexo= usuarioDB.Sexo;
                             usuario.Telefono= usuarioDB.Telefono;
                             usuario.Celular= usuarioDB.Celular;
                             usuario.Estatus= usuarioDB.Estatus;
                             usuario.CURP= usuarioDB.CURP;
                             usuario.Imagen= usuarioDB.Imagen;
-                            usuario.Direccion.IdDireccion = usuarioDB.IdDireccion.Value;
+                            usuario.Direccion.IdDireccion = usuarioDB.IdDireccion;
                             usuario.Direccion.Calle=usuarioDB.Calle;
                             usuario.Direccion.NumeroInterior = usuarioDB.NumeroInterior;
                             usuario.Direccion.NumeroExterior = usuarioDB.NumeroExterior;
-                            usuario.Direccion.Colonia.IdColonia=usuarioDB.IdColonia.Value;
+                            usuario.Direccion.Colonia.IdColonia=usuarioDB.IdColonia;
                             usuario.Direccion.Colonia.Nombre = usuarioDB.Colonia;
-                            usuario.Direccion.Colonia.Municipio.IdMunicipio = usuarioDB.IdMunicipio.Value;
+                            usuario.Direccion.Colonia.Municipio.IdMunicipio = usuarioDB.IdMunicipio;
                             usuario.Direccion.Colonia.Municipio.Nombre = usuarioDB.Municipio;
-                            usuario.Direccion.Colonia.Municipio.Estado.IdEstado = usuarioDB.IdEstado.Value;
+                            usuario.Direccion.Colonia.Municipio.Estado.IdEstado = usuarioDB.IdEstado;
                             usuario.Direccion.Colonia.Municipio.Estado.Nombre=usuarioDB.Estado;
 
                             result.Objects.Add(usuario);
@@ -568,7 +569,7 @@ namespace BL
                             
                             usuario.Email = usuarioDB.Email;
                             usuario.Password = usuarioDB.Password;
-                            usuario.FechaNacimiento = usuarioDB.FechaNacimiento.ToString();
+                            usuario.FechaNacimiento = usuarioDB.FechaNacimiento.Value.ToString("dd-MM-yyyy"); 
                             usuario.Sexo = usuarioDB.Sexo;
                             usuario.Telefono = usuarioDB.Telefono;
                             usuario.Celular = usuarioDB.Celular;
@@ -646,7 +647,7 @@ namespace BL
                 using (DL_EF.AHernandezProgramacionNCapasEntities contex = new DL_EF.AHernandezProgramacionNCapasEntities())
                 {
                     var rowsAffected = contex.UsuarioUpdate(usuario.IdUsuario, usuario.Nombre, usuario.ApellidoPaterno, usuario.ApellidoMaterno,
-                        usuario.UserName, usuario.Rol.IdRol, usuario.Email, usuario.Password, usuario.FechaNacimiento,
+                        usuario.UserName, usuario.Rol.IdRol, usuario.Email, usuario.Password, usuario.FechaNacimiento.ToString(),
                         usuario.Sexo, usuario.Telefono, usuario.Celular, usuario.Estatus, usuario.CURP, usuario.Imagen,
                         usuario.Direccion.IdDireccion);
 

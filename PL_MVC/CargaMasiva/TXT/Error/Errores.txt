@@ -1,0 +1,10 @@
+** Error el usuario 1 C3sar Leyva no pudo ser registrado debido a:
+El nombre solo debe contener letras 
+La contraseña tiene que tener 8 caracteres, La primera letra mayúscula y debe contener al menos un número
+
+
+** Error el usuario 2 Adr1ana Hernandez no pudo ser registrado debido a:
+El nombre solo debe contener letras 
+
+
+

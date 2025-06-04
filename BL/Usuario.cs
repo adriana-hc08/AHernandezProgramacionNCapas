@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Entity.Core.Objects;
+using System.Data.OleDb;
 using System.Data.SqlClient;
 using System.Globalization;
 using System.Linq;
@@ -487,8 +488,13 @@ namespace BL
             {
                 using (DL_EF.AHernandezProgramacionNCapasEntities contex = new DL_EF.AHernandezProgramacionNCapasEntities())
                 {
-                    var listaUsuarios=contex.UsuarioGetAll().ToList();
-                    if(listaUsuarios.Count > 0)
+                    var listaUsuarios=contex.UsuarioGetAll(
+                         nombre: null,           // o "valorBuscado"
+                         apellidoPaterno: null,  // o "valorBuscado"
+                         apellidoMaterno: null,  // o "valorBuscado"
+                         idRol: null).ToList();            // o (byte?)valorIdRol
+
+                    if (listaUsuarios.Count > 0)
                     {
                         result.Objects = new List<object>();
                         foreach(var usuarioDB in listaUsuarios)
@@ -616,11 +622,21 @@ namespace BL
             {
                 using (DL_EF.AHernandezProgramacionNCapasEntities contex = new DL_EF.AHernandezProgramacionNCapasEntities())
                 {
+                    usuario.Direccion = new ML.Direccion();
+                    int? direccion = null;
+                    if (usuario.Direccion.IdDireccion==0)
+                    {
+                        direccion = null;
+                    }
+                    else
+                    {
+                        direccion = usuario.Direccion.IdDireccion;
+                    }
                     ObjectParameter idUsuario= new ObjectParameter("IdUsuario",typeof(int));
                     var rowsAffected = contex.UsuarioAdd(usuario.Nombre, usuario.ApellidoPaterno,usuario.ApellidoMaterno,
                         usuario.UserName,usuario.Rol.IdRol,usuario.Email, usuario.Password,usuario.FechaNacimiento,
                         usuario.Sexo.ToString(),usuario.Telefono,usuario.Celular,usuario.Estatus,usuario.CURP,usuario.Imagen,
-                        usuario.Direccion.IdDireccion);
+                        direccion);
                     if (rowsAffected>0)
                     {
                         result.Correct = true;
@@ -1144,6 +1160,73 @@ namespace BL
                 result.Ex = ex;
             }
 
+            return result;
+        }
+        public static ML.Result leerExcel(string connectionString)
+        {
+            ML.Result result=new ML.Result();
+            try
+            {
+                using (OleDbConnection contex=new OleDbConnection(connectionString))
+                {
+                    string query = "SELECT * FROM [Sheet1$]";
+                    using (OleDbCommand cmd=new OleDbCommand())
+                    {
+                        cmd.CommandText = query;
+                        cmd.Connection = contex;
+
+                        OleDbDataAdapter adapter = new OleDbDataAdapter();
+                        adapter.SelectCommand = cmd;
+
+                        DataTable dt = new DataTable();
+                        adapter.Fill(dt);
+
+                        if (dt.Rows.Count > 0)
+                        {
+                            result.Objects = new List<object>();
+                            foreach (DataRow row in dt.Rows)
+                            {
+                                if (row.ItemArray.Length == 13 && row!=null)
+                                {
+                                    ML.Usuario usuario = new ML.Usuario();
+                                    usuario.Rol = new ML.Rol();
+                                    //usuario.IdUsuario = Convert.ToInt32(row[0].ToString());
+                                    usuario.Nombre = (row[0].ToString());
+                                    usuario.ApellidoPaterno = (row[1].ToString());
+                                    usuario.ApellidoMaterno = (row[2].ToString());
+                                    usuario.UserName = (row[3].ToString());
+                                    usuario.Rol.IdRol = Convert.ToByte(row[4].ToString());
+                                    usuario.Email = (row[5].ToString());
+                                    usuario.Password = (row[6].ToString());
+                                    usuario.FechaNacimiento = (row[7].ToString());
+                                    usuario.Sexo = Convert.ToChar(row[8].ToString());
+                                    usuario.Telefono = (row[9].ToString());
+                                    usuario.Celular = (row[10].ToString());
+                                    usuario.Estatus = Convert.ToBoolean(row[11].ToString());
+                                    usuario.CURP = (row[12].ToString());
+
+                                    result.Objects.Add(usuario);
+
+                                }
+
+                            }
+                            result.Correct = true;
+
+                        }
+                        else
+                        {
+                            result.Correct = false;
+                            result.ErrorMessage = "No se encontraron registros";
+                        }
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                result.Correct = false;
+                result.ErrorMessage = ex.Message;
+                result.Ex = ex;
+            }
             return result;
         }
     }

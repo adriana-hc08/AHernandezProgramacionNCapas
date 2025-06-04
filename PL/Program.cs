@@ -11,8 +11,9 @@
             //PL.Usuario.UpdateSP();
             //PL.Usuario.DeleteSP();
             //PL.Usuario.GetAll();
-            PL.Usuario.GetbyId();
-            ///PL.CargaMasiva.LeerTxt();
+            //PL.Usuario.GetbyId();
+            PL.CargaMasiva.LeerTxt();
+            //PL.Prueba.LeerTxt();
         }
     }
 }

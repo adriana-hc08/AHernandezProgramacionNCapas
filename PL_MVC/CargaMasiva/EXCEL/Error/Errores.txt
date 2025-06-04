@@ -1,0 +1,15 @@
+** Error el usuario 2 Paula Celestino no pudo ser registrado debido a:
+
+El username debe tener 8 caracteres, primera letra mayúscula, al menos un número y un caracter especial 
+La contraseña tiene que tener 8 caracteres, La primera letra mayúscula y debe contener al menos un número
+Ingrese una CURP valida
+
+
+** Error el usuario 3 Javier Hernandez no pudo ser registrado debido a:
+
+El username debe tener 8 caracteres, primera letra mayúscula, al menos un número y un caracter especial 
+La contraseña tiene que tener 8 caracteres, La primera letra mayúscula y debe contener al menos un número
+Ingrese una CURP valida
+
+
+

@@ -1,0 +1,170 @@
+﻿
+@{
+    ViewBag.Title = "Carga";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/CSS/Estilos.css" rel="stylesheet" />
+<br />
+<br />
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Carga Masiva</h2>
+        </div>
+    </div>
+    <div clas="row">
+        <div class="col-md-12">
+            <h5>A continuación de click en el botón "Carga masiva" y cargue un archivo txt o un archivo excel</h5>
+            <hr />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <button type="button" class="col-12 btn btn-outline-success" id="CargaMasiva" data-bs-toggle="collapse" data-bs-target="#multicollapse">
+                <i class=" bi bi-upload" style="font-size: 1em;"></i> Carga Masiva
+            </button>
+        </div>
+    </div>
+
+    <br />
+
+    <div class="row collapse" id="multicollapse">
+        <div class="card card-body">
+            <div class="col-12">
+                @using (Html.BeginForm("CargaMasiva", "CargaMasiva", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    <div class="row">
+                        <div class="col-4">
+                            <input type="radio" name="tipoArchivo" id="TXT" onclick="ValidarArchivo(this)">
+                            <label id="txt">TXT</label>
+
+                        </div>
+                        <div class="col-4">
+                            <input type="radio" name="tipoArchivo" id="Excel" onclick="ValidarArchivo(this)">
+                            <label id="excel">Excel</label>
+                        </div>
+                    </div>
+                    <br />
+                    <br />
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="input-group row">
+                                <label id="selecAcrhivo" for="inputFile">Seleciona un archivo</label>
+                                <input type="file" class="form-control col-6" name="archivo" id="inputFile"  disabled>
+                            </div>
+                        </div>
+                        @if (Session["rutaDestino"] == null)
+                        {
+                            <div class="col-3">
+                                <button type="submit" id="validar" value="Validar" name="Action" class="col-6 btn btn-outline-info" onchange="ActivarBotonValidar(this)" disabled>
+                                    <i class="bi bi-list-check" style="font-size: 1em;"></i>Validar
+                                </button>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="col-3">
+                                <button type="submit" id="cargar" name="Action" value="Cargar" class="col-6 btn btn-outline-success">
+                                    <i class="bi bi-upload" style="font-size: 1em;"></i>Cargar
+                                </button>
+                            </div>
+
+                        }
+                    </div>
+                    <br />
+                }
+            </div>
+
+        </div>
+
+    </div>
+    <br />
+    <div class="row">
+        @if (Model.Errores.Count > 0)
+        {
+            <div clas="col-12">
+                <a type="submit" id="descargar" name="Action" value="descargar" class="d-grid gap-1 col-2 mx-auto btn btn-outline-danger" href="/CargaMasiva/Download">
+                    <i class="bi bi-download"></i>Descargar Errores
+                </a>
+            </div>
+            <br />
+            <h5>Usuarios Incorrectos</h5>
+            <div class="table-responsive">
+                <div class="col-md-12">
+                    <div class="alert alert-danger" role="alert">
+                        A continuación se muestran los usuarios que tienen información incorrecta. Favor de corregirlos
+                    </div>
+                    <table class=" table-hover table-bordered border-danger">
+                        <tehead>
+                            <tr>
+                                <th>Numero de Error</th>
+                                <th>Errores</th>
+                                <th>Check</th>
+                            </tr>
+                        </tehead>
+                        <tbody>
+                            @{
+                                int contador = 1;
+                                foreach (string error in Model.Errores)
+                                {
+                                    <tr>
+                                        <td>@contador</td>
+                                        <td>@error</td>
+                                        <td> <input type="checkbox" class="le-checkbox" disabled /></td>
+                                    </tr>
+                                    contador++;
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        }
+    </div>
+    <br />
+    <div class="row">
+        @if (Model.Correctos.Count > 0)
+        {
+            <h5>Usuarios Correctos</h5>
+            <div class="table-responsive">
+                <div class="col-md-12">
+                    <div class="alert alert-success" role="alert">
+                        En la siguiente lista se muestran los usuarios que ya estan validados correctamente. Puede cargar los usuarios a la base de datos
+                        de click en el boton "Carga masiva" y despues en cargar y listo.
+                    </div>
+                    <table class=" table-hover table-bordered border-success">
+                        <tehead>
+                            <tr>
+                                <th>Numero de registro</th>
+                                <th>Usuario</th>
+                                <th>Check</th>
+                            </tr>
+                        </tehead>
+                        <tbody>
+                            @{
+                                int valido = 1;
+                                foreach (string correcto in Model.Correctos)
+                                {
+                                    <tr>
+                                        <td>@valido</td>
+                                        <td>@correcto</td>
+                                        <td> <input type="checkbox" name="Correctos" class="le-checkbox" checked disabled /></td>
+                                    </tr>
+                                    valido++;
+                                }
+                            }
+
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+
+    </div>
+</div>
+
+
+<script src="~/Scripts/jquery-3.4.1.js"></script>
+<script src="~/Scripts/CargaMasiva/Validaciones/validacionesCargaMasiva.js"></script>

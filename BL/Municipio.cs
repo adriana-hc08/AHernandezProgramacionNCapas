@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ML;
+using DL_EF;
 
 namespace BL
 {
@@ -84,6 +85,51 @@ namespace BL
 
             }
             catch (Exception ex)
+            {
+                result.Correct = false;
+                result.ErrorMessage = ex.Message;
+                result.Ex = ex;
+            }
+            return result;
+        }
+        public static ML.Result GetByIdEstadoLinQ(int IdEstado)
+        {
+            ML.Result result = new ML.Result();
+            try
+            {
+                using (DL_EF.AHernandezProgramacionNCapasEntities contex = new DL_EF.AHernandezProgramacionNCapasEntities())
+                {
+                    var municipiobyId = (from municipioDB in contex.Municipios
+
+                                         where municipioDB.IdEstado == IdEstado
+                                         select new
+                                         {
+                                             IdMunicipio = municipioDB.IdMunicipio,
+                                             Nombre = municipioDB.Nombre,
+
+                                         });
+                    result.Objects = new List<object>();
+                    if (municipiobyId != null && municipiobyId.ToList().Count > 0)
+                    {   
+                        foreach(var obj in municipiobyId)
+                        {
+                            ML.Municipio municipio = new ML.Municipio();
+                            municipio.IdMunicipio = obj.IdMunicipio;
+                            municipio.Nombre = obj.Nombre;
+                            result.Objects.Add(municipio);
+                        }                     
+
+                        result.Correct = true;
+                    }
+                    else
+                    {
+                        result.Correct = false;
+                        result.ErrorMessage = "No se encontraron el usuario";
+                    }
+                }
+
+            }
+           catch (Exception ex)
             {
                 result.Correct = false;
                 result.ErrorMessage = ex.Message;

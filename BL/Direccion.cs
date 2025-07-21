@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using ML;
 using System.Data.Entity.Core.Objects;
 using System.Xml;
+using DL_EF;
 
 namespace BL
 {
@@ -225,6 +226,92 @@ namespace BL
                 result.Correct = false;
                 result.ErrorMessage = ex.Message;
                 result.Ex = ex;
+            }
+            return result;
+        }
+        public static ML.Result AddLINQ(ML.Usuario usuario)
+        {
+            Result result = new ML.Result();
+            try
+            {
+                using (AHernandezProgramacionNCapasEntities contex = new AHernandezProgramacionNCapasEntities())
+                {
+                    DL_EF.Direccion direccionDL = new DL_EF.Direccion();                 
+                    direccionDL.Calle = usuario.Direccion.Calle;
+                    direccionDL.NumeroInterior = usuario.Direccion.NumeroInterior;
+                    direccionDL.NumeroExterior = usuario.Direccion.NumeroExterior;
+                    direccionDL.IdColonia = usuario.Direccion.Colonia.IdColonia;
+
+                    contex.Direccions.Add(direccionDL);
+                    contex.SaveChanges();
+
+                    int idDireccion = direccionDL.IdDireccion;
+                    result.Object= idDireccion;
+                    usuario.Direccion.IdDireccion=idDireccion;
+
+                    result.Correct = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Correct = false;
+                result.ErrorMessage = ex.Message;
+            }
+            return result;
+        }
+        public static ML.Result UpdateLINQ(ML.Usuario usuario)
+        {
+            Result result = new ML.Result();
+            try
+            {
+                using (AHernandezProgramacionNCapasEntities contex = new AHernandezProgramacionNCapasEntities())
+                {
+                    var query = (from a in contex.Direccions
+                                 where a.IdDireccion == usuario.Direccion.IdDireccion
+                                 select a).SingleOrDefault();
+                    if (query != null)
+                    {
+                        query.IdDireccion = usuario.Direccion.IdDireccion;
+                        query.Calle = usuario.Direccion.Calle;
+                        query.NumeroInterior= usuario.Direccion.NumeroInterior;
+                        query.NumeroExterior = usuario.Direccion.NumeroExterior;
+                        query.IdColonia = usuario.Direccion.Colonia.IdColonia;
+                        contex.SaveChanges();
+                        result.Correct = true;
+                    }
+                    else
+                    {
+                        result.Correct = false;
+                        result.ErrorMessage = "No se pudo actualizar";
+                    }                                       
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Correct = false;
+                result.ErrorMessage = ex.Message;
+            }
+            return result;
+        }
+        public static ML.Result DeleteLINQ(int IdDIreccion)
+        {
+            Result result = new ML.Result();
+            try
+            {
+                using (AHernandezProgramacionNCapasEntities contex = new AHernandezProgramacionNCapasEntities())
+                {
+                    var query = (from a in contex.Direccions
+                                 where a.IdDireccion == IdDIreccion
+                                 select a).First();
+                    contex.Direccions.Remove(query);
+                    contex.SaveChanges();
+                    result.Correct = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Correct = false;
+                result.ErrorMessage = ex.Message;
             }
             return result;
         }

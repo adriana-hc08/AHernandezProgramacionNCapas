@@ -1,0 +1,71 @@
+public ActionResult CargaMasiva()
+        {
+            int registrosCorrectos = 0;
+            int registrosErroneos = 0;
+
+            HttpPostedFileBase archivotxt = Request.Files["inptTxt"];
+            BinaryReader b = new BinaryReader(archivotxt.InputStream);
+            byte[] binData = b.ReadBytes(archivotxt.ContentLength);
+            string texto = System.Text.Encoding.UTF8.GetString(binData);
+
+            texto = Regex.Replace(texto, "\r?\n", "\n");
+            string[] strings = texto.Split(new[] { "\n" }, StringSplitOptions.None);
+            if(strings.Length > 0)
+            {
+                texto = string.Join("\n", strings.Skip(1));
+            }
+            string[] registro = texto.Split('|');
+
+            if (registro.Length < 16)
+            {
+                try
+                {
+                    ML.Usuarios usuario = new ML.Usuarios();
+                    usuario.Rol = new ML.Rol();
+                    usuario.Direccion = new ML.Direccion();
+                    usuario.Direccion.Colonia = new ML.Colonia();
+
+                    usuario.UserName = registro[0];
+                    usuario.Nombre = registro[1];
+                    usuario.ApellidoPaterno = registro[2];
+                    usuario.ApellidoMaterno = registro[3];
+                    usuario.Email = registro[4];
+                    usuario.Password = registro[5];
+                    usuario.Sexo = registro[6];
+                    usuario.Telefono = registro[7];
+                    usuario.Celular = registro[8];
+                    usuario.FechaNacimiento = Convert.ToDateTime(registro[9]);
+                    usuario.CURP = registro[10];
+                    usuario.Rol.IdRol = Convert.ToInt32(registro[11]);
+                    usuario.Direccion.Calle = registro[12];
+                    usuario.Direccion.NumeroInterior = registro[13];
+                    usuario.Direccion.NumeroExterior = registro[14];
+                    usuario.Direccion.Colonia.IdColonia = Convert.ToInt32(registro[15]);
+
+                    ML.Result result = BL.Usuarios.UsuarioAddEFSP(usuario);
+                    if (result.Correct)
+                    {
+                        registrosCorrectos++;
+                        Console.WriteLine($"Registros Correctos: {registrosCorrectos}");
+                        Console.WriteLine($"Registros Erroneos: {registrosErroneos}");
+                        Console.WriteLine("Fin de registros");
+                        Console.WriteLine("Usuario Agregado correctamente");
+                    }
+                    else
+                    {
+                        registrosErroneos++;
+                        Console.WriteLine($"Registros Correctos: {registrosCorrectos}");
+                        Console.WriteLine($"Registros Erroneos: {registrosErroneos}");
+                        Console.WriteLine("Fin de registros");
+                        Console.WriteLine("Error al agregar usuario");
+                    }
+                }
+                catch(Exception e)
+                {
+                    Console.WriteLine("El archivo no se puede leer");
+                    Console.WriteLine(e.Message);
+                }
+            }
+                
+            return RedirectToAction("GetAll");
+        }

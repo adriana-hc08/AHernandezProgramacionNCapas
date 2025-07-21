@@ -870,6 +870,7 @@
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="ActualizarEstatus" FunctionName="AHernandezProgramacionNCapasModel.Store.ActualizarEstatus" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

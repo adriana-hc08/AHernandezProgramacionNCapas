@@ -12,6 +12,7 @@
             //PL.Usuario.DeleteSP();
             //PL.Usuario.GetAll();
             PL.Usuario.GetbyId();
+            ///PL.CargaMasiva.LeerTxt();
         }
     }
 }

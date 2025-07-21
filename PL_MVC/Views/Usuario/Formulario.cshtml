@@ -19,14 +19,14 @@
             <hr />
         </div>
     </div>
-    @using (Html.BeginForm("Formulario", "Usuario", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    @using (Html.BeginForm("Formulario", "Usuario", FormMethod.Post, new { enctype = "multipart/form-data", @class = "row g-3 needs-validation", novalidate = "novalidate",@Id="usuarioForm" }))
     {
         <div class="row">
             <div class="col-4 ">
                 @Html.LabelFor(model => model.IdUsuario, new { @class = "form-label" })
                 <div class="input-group-prepend">
                     <div class="input-group-text">
-                        <i class="bi bi-0-square" style="font-size: 1em;"></i>
+                        <i class="bi bi-0-square" style="font-size: 1em; color: #ff00ff"></i>
                     </div>
                     @Html.TextBoxFor(model => model.IdUsuario, new { @class = "form-control" })
                 </div>
@@ -35,19 +35,22 @@
                 @Html.LabelFor(model => model.Nombre, new { @class = "form-label" })
                 <div class="input-group-prepend">
                     <div class="input-group-text">
-                        <i class="bi bi-person" style="font-size: 1em;"></i>
+                        <i class="bi bi-person" style="font-size: 1em; color: #ff00ff"></i>
                     </div>
-                    @Html.TextBoxFor(model => model.Nombre, new { @class = "form-control" })
+                    @Html.TextBoxFor(model => model.Nombre, new { @class = "form-control", @id = "txtNombre", @onkeypress = "return ValidarSoloLetras(event,'lblErrorNombre')", maxlength = "25", required = "required" })
+
                 </div>
+                @Html.ValidationMessageFor(model => model.Nombre, "", new { @class = "text-danger", @id = "lblErrorNombre" })
             </div>
             <div class="col-4">
                 @Html.LabelFor(model => model.ApellidoPaterno, new { @class = "form-label" })
                 <div class="input-group-prepend">
                     <div class="input-group-text">
-                        <i class="bi bi-person" style="font-size: 1em;"></i>
+                        <i class="bi bi-person" style="font-size: 1em; color: #ff00ff"></i>
                     </div>
-                    @Html.TextBoxFor(model => model.ApellidoPaterno, new { @class = "form-control" })
+                    @Html.TextBoxFor(model => model.ApellidoPaterno, new { @class = "form-control", @id = "txtApellidoPa", @onkeypress = "return ValidarSoloLetras(event,'lblErrorApellidoPa')", maxlength = "25", required = "required" })
                 </div>
+                @Html.ValidationMessageFor(model => model.ApellidoPaterno, "", new { @class = "text-danger", @id = "lblErrorApellidoPa" })
             </div>
         </div>
         <div class="row">
@@ -55,29 +58,30 @@
                 @Html.LabelFor(model => model.ApellidoMaterno, new { @class = "form-label" })
                 <div class="input-group-prepend">
                     <div class="input-group-text">
-                        <i class="bi bi-person" style="font-size: 1em;"></i>
+                        <i class="bi bi-person" style="font-size: 1em; color: #ff00ff"></i>
                     </div>
-                    @Html.TextBoxFor(model => model.ApellidoMaterno, new { @class = "form-control" })
+                    @Html.TextBoxFor(model => model.ApellidoMaterno, new { @class = "form-control", @id = "txtApellidoMa", @onkeypress = "return ValidarSoloLetras(event,'lblErrorApellidoMa')", maxlength = "25", required = "required" })
                 </div>
+                @Html.ValidationMessageFor(model => model.ApellidoMaterno, "", new { @class = "text-danger", @id = "lblErrorApellidoMa" })
             </div>
             <div class="col-4">
                 @Html.LabelFor(model => model.UserName, new { @class = "form-label" })
                 <div class="input-group-prepend">
-                    <div class="input-group-text" style="font-size: 1em;">
+                    <div class="input-group-text" style="font-size: 1em; color: #ff00ff">
                         <i class="bi bi-person-circle"></i>
                     </div>
-                    @Html.TextBoxFor(model => model.UserName, new { @class = "form-control" })
+                    @Html.TextBoxFor(model => model.UserName, new { @class = "form-control", @id = "txtUsername", @onblur = " return ValidarUsername(this,'lblErrorUsername')", maxlength = "8", required = "required" })
                 </div>
-
+                @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger", @id = "lblErrorUsername" })
             </div>
             <div class="col-4">
                 @Html.LabelFor(model => model.Rol, new { @class = "form-label" })
                 @* @Html.TextBoxFor(model => model.Rol.IdRol, new { @class = "form-control" })*@
                 <div class="input-group-prepend">
                     <div class="input-group-text">
-                        <i class="bi bi-0-square" style="font-size: 1em;"></i>
+                        <i class="bi bi-0-square" style="font-size: 1em; color: #ff00ff"></i>
                     </div>
-                    @Html.DropDownListFor(model => model.Rol.IdRol, new SelectList(Model.Rol.Roles, "IdRol", "Nombre"), "Selecciona una opcion", new { @class = "form-control" })
+                    @Html.DropDownListFor(model => model.Rol.IdRol, new SelectList(Model.Rol.Roles, "IdRol", "Nombre"), "Selecciona una opcion", new { @class = "form-control", required = "required" })
                 </div>
             </div>
 
@@ -88,28 +92,52 @@
                 @Html.LabelFor(model => model.Email, new { @class = "form-label" })
                 <div class="input-group-prepend">
                     <div class="input-group-text">
-                        <i class="bi bi-envelope-at" style="font-size: 1em;"></i>
+                        <i class="bi bi-envelope-at" style="font-size: 1em; color: #ff00ff"></i>
                     </div>
-                    @Html.TextBoxFor(model => model.Email, new { @class = "form-control" })
+                    @Html.TextBoxFor(model => model.Email, new { @class = "form-control", @id = "txtEmail", @onblur = "ValidarEmail('lblErrorEmail')", required = "required" })
                 </div>
+                @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger", @id = "lblErrorEmail" })
             </div>
             <div class="col-4">
                 @Html.LabelFor(model => model.Password, new { @class = "form-label" })
                 <div class="input-group-prepend">
                     <div class="input-group-text">
-                        <i class="bi bi-lock" style="font-size: 1em;"></i>
+                        <i class="bi bi-lock" style="font-size: 1em; color: #ff00ff"></i>
                     </div>
-                    @Html.TextBoxFor(model => model.Password, new { @class = "form-control" })
+                    @Html.TextBoxFor(model => model.Password, new { @class = "form-control", @type = "password", @id = "txtPassword", @onblur = " ValidarPassword(this,'lblErrorPassword')", maxlength = "8", required = "required" })
+                    <i class="bi bi-eye-slash" id="togglePassword" style="font-size: 1em; color: #00aaff"></i>
                 </div>
+                @Html.ValidationMessageFor(model => model.Password, "", new { @id = "lblErrorPassword" })
             </div>
             <div class="col-4">
                 @Html.LabelFor(model => model.FechaNacimiento, new { @class = "form-label" })
                 <div class="input-group-prepend">
                     <div class="input-group-text">
-                        <i class="bi bi-calendar3" style="font-size: 1em;"></i>
+                        <i class="bi bi-calendar3" style="font-size: 1em; color: #ff00ff"></i>
                     </div>
-                    @Html.TextBoxFor(model => model.FechaNacimiento, new { @class = "form-control" })
+                    @Html.TextBoxFor(model => model.FechaNacimiento, new { @class = "form-control", required = "required", @type = "date" })
                 </div>
+            </div>
+            <div class="col-4">
+                @Html.LabelFor(model => model.Email, new { @class = "form-label" })
+                <div class="input-group-prepend">
+                    <div class="input-group-text">
+                        <i class="bi bi-envelope-at" style="font-size: 1em; color: #ff00ff"></i>
+                    </div>
+                    @Html.TextBoxFor(model => model.Email, new { @class = "form-control", @id = "txtEmailConfirm", @onblur = "ValidarConfirmacionEmail('lblErrorEmailConfirm')", required = "required" })
+                </div>
+                @Html.ValidationMessageFor(model => model.Email, "", new { @id = "lblErrorEmailConfirm" })
+            </div>
+            <div class="col-4">
+                @Html.LabelFor(model => model.Password, new { @class = "form-label" })
+                <div class="input-group-prepend">
+                    <div class="input-group-text">
+                        <i class="bi bi-lock" style="font-size: 1em; color: #ff00ff"></i>
+                    </div>
+                    @Html.TextBoxFor(model => model.Password, new { @class = "form-control", @type = "password", @id = "txtPasswordConfirm", @onblur = "ValidarConfirmarPassword('lblErrorPasswordConfirm')", maxlength = "8", required = "required" })
+                    <i class="bi bi-eye-slash" id="togglePasswordConfirm" style="font-size: 1em; color: #00aaff"></i>
+                </div>
+                @Html.ValidationMessageFor(model => model.Password, "", new { @id = "lblErrorPasswordConfirm" })
             </div>
 
         </div>
@@ -117,29 +145,31 @@
             <div class="col-4">
                 @Html.LabelFor(model => model.Sexo, new { @class = "form-label" })
                 <div class="input-group-prepend">
-                    <div class="input-group-text">
-                        <i class="bi bi-lock" style="font-size: 1em;"></i>
-                    </div>
-                    @Html.TextBoxFor(model => model.Sexo, new { @class = "form-control" })
+                    @Html.RadioButtonFor(model => model.Sexo, "F") Femenino
+                    @Html.RadioButtonFor(model => model.Sexo, "M") Masculino
                 </div>
             </div>
             <div class="col-4">
                 @Html.LabelFor(model => model.Telefono, new { @class = "form-label" })
                 <div class="input-group-prepend">
                     <div class="input-group-text">
-                        <i class="bi bi-telephone" style="font-size: 1em;"></i>
+                        <i class="bi bi-telephone" style="font-size: 1em; color: #ff00ff"></i>
                     </div>
-                    @Html.TextBoxFor(model => model.Telefono, new { @class = "form-control" })
+                    @Html.TextBoxFor(model => model.Telefono, new { @class = "form-control", @id = "txtTelefono", @onkeypress = "return ValidarSoloNumeros(event,'lblErrorTelefono')", @oninput = "formato(this,'lblErrorTelefono')", maxlength = "12", required = "required" })
                 </div>
+                @Html.ValidationMessageFor(model => model.Telefono, "", new { @id = "lblErrorTelefono" })
+
             </div>
             <div class="col-4">
                 @Html.LabelFor(model => model.Celular, new { @class = "form-label" })
                 <div class="input-group-prepend">
                     <div class="input-group-text">
-                        <i class="bi bi-phone" style="font-size: 1em;"></i>
+                        <i class="bi bi-phone" style="font-size: 1em; color: #ff00ff"></i>
                     </div>
-                    @Html.TextBoxFor(model => model.Celular, new { @class = "form-control" })
+                    @Html.TextBoxFor(model => model.Celular, new { @class = "form-control", @id = "txtCelular", @onkeypress = "return ValidarSoloNumeros(event,'lblErrorCelular')", @oninput = "formato(this,'lblErrorTelefono')", maxlength = "12", required = "required" })
                 </div>
+
+                @Html.ValidationMessageFor(model => model.Telefono, "", new { @id = "lblErrorCelular" })
             </div>
 
         </div>
@@ -147,28 +177,39 @@
             <div class="col-4">
                 @Html.LabelFor(model => model.Estatus, new { @class = "form-label" })
                 <div class="input-group-prepend">
-                    <div class="input-group-text">
-                        <i class="bi bi-toggles2" style="font-size: 1em;"></i>
-                    </div>
-                    @Html.TextBoxFor(model => model.Estatus, new { @class = "form-control" })
+                    <div class="form-check form-switch">
+                        @if (Model.Estatus == true)
+                        {
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch" id="switchCheckChecked" checked name=" Estatus">
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch" id="switchCheckDefault" name="Estatus">
+                            </div>
+                        }
+                    </div>                  
                 </div>
             </div>
             <div class="col-4">
                 @Html.LabelFor(model => model.CURP, new { @class = "form-label" })
                 <div class="input-group-prepend">
                     <div class="input-group-text">
-                        <i class="bi bi-card-text" style="font-size: 1em;"></i>
+                        <i class="bi bi-card-text" style="font-size: 1em; color: #ff00ff"></i>
                     </div>
-                    @Html.TextBoxFor(model => model.CURP, new { @class = "form-control" })
+                    @Html.TextBoxFor(model => model.CURP, new { @class = "form-control", @id = "txtCurp", @onblur = "ValidarCurp(this,'lblErrorCurp')", required = "required", maxlength = "18" })
                 </div>
+                @Html.ValidationMessageFor(model => model.CURP, "", new { @id = "lblErrorCurp" })
             </div>
             <div class="col-4">
                 @Html.LabelFor(model => model.Direccion.Calle, new { @class = "form-label" })
                 <div class="input-group-prepend">
                     <div class="input-group-text">
-                        <i class="bi bi-card-text" style="font-size: 1em;"></i>
+                        <i class="bi bi-card-text" style="font-size: 1em; color: #ff00ff"></i>
                     </div>
-                    @Html.TextBoxFor(model => model.Direccion.Calle, new { @class = "form-control" })
+                    @Html.TextBoxFor(model => model.Direccion.Calle, new { @class = "form-control", required = "required" })
                 </div>
             </div>
         </div>
@@ -178,18 +219,18 @@
                 @Html.LabelFor(model => model.Direccion.NumeroInterior, new { @class = "form-label" })
                 <div class="input-group-prepend">
                     <div class="input-group-text">
-                        <i class="bi bi-card-text" style="font-size: 1em;"></i>
+                        <i class="bi bi-card-text" style="font-size: 1em; color: #ff00ff"></i>
                     </div>
-                    @Html.TextBoxFor(model => model.Direccion.NumeroInterior, new { @class = "form-control" })
+                    @Html.TextBoxFor(model => model.Direccion.NumeroInterior, new { @class = "form-control", required = "required" })
                 </div>
             </div>
             <div class="col-4">
                 @Html.LabelFor(model => model.Direccion.NumeroExterior, new { @class = "form-label" })
                 <div class="input-group-prepend">
                     <div class="input-group-text">
-                        <i class="bi bi-card-text" style="font-size: 1em;"></i>
+                        <i class="bi bi-card-text" style="font-size: 1em; color: #ff00ff"></i>
                     </div>
-                    @Html.TextBoxFor(model => model.Direccion.NumeroExterior, new { @class = "form-control" })
+                    @Html.TextBoxFor(model => model.Direccion.NumeroExterior, new { @class = "form-control", required = "required" })
                 </div>
             </div>
         </div>
@@ -199,17 +240,17 @@
                 @Html.LabelFor(model => model.Direccion.Colonia.Municipio.Estado, new { @class = "form-label" })
                 <div class="input-group-prepend">
                     <div class="input-group-text">
-                        <i class="bi bi-0-square" style="font-size: 1em;"></i>
-                    </div>                   
-                        @Html.DropDownListFor(model => model.Direccion.Colonia.Municipio.Estado.IdEstado, new SelectList(Model.Direccion.Colonia.Municipio.Estado.Estados, "IdEstado", "Nombre"),
-                                "Selecciona un Estado", new { @id = "ddlEstado", @class = "form-control", @onchange = "FillMunicipios()" })                   
+                        <i class="bi bi-0-square" style="font-size: 1em; color: #ff00ff"></i>
+                    </div>
+                    @Html.DropDownListFor(model => model.Direccion.Colonia.Municipio.Estado.IdEstado, new SelectList(Model.Direccion.Colonia.Municipio.Estado.Estados, "IdEstado", "Nombre"),
+                            "Selecciona un Estado", new { @id = "ddlEstado", @class = "form-control", @onchange = "FillMunicipios()", required = "required" })
                 </div>
             </div>
             <div class="col-4">
                 @Html.LabelFor(model => model.Direccion.Colonia.Municipio, new { @class = "form-label" })
                 <div class="input-group-prepend">
                     <div class="input-group-text">
-                        <i class="bi bi-0-square" style="font-size: 1em;"></i>
+                        <i class="bi bi-0-square" style="font-size: 1em; color: #ff00ff"></i>
                     </div>
                     @if (Model.Direccion.Colonia.Municipio.Municipios != null)
                     {
@@ -227,7 +268,7 @@
                 @Html.LabelFor(model => model.Direccion.Colonia, new { @class = "form-label" })
                 <div class="input-group-prepend">
                     <div class="input-group-text">
-                        <i class="bi bi-0-square" style="font-size: 1em;"></i>
+                        <i class="bi bi-0-square" style="font-size: 1em; color: #ff00ff"></i>
                     </div>
                     @if (Model.Direccion.Colonia.Colonias != null)
                     {
@@ -236,8 +277,8 @@
                     }
                     else
                     {
-                      @Html.DropDownListFor(model => model.Direccion.Colonia.IdColonia, new SelectList(string.Empty, "IdColonia", "Nombre"),
-                      "Selecciona una opcion", htmlAttributes: new { id = "ddlColonia", @class = "form-control" })
+                        @Html.DropDownListFor(model => model.Direccion.Colonia.IdColonia, new SelectList(string.Empty, "IdColonia", "Nombre"),
+                        "Selecciona una opcion", htmlAttributes: new { id = "ddlColonia", @class = "form-control" })
                     }
 
                 </div>
@@ -263,10 +304,10 @@
 
         <div class="row mt-3">
             <div class="col-1">
-                <input type="submit" value="Guardar" class="btn btn-success" />
+                <input type="submit" value="Guardar" class="btn btn-outline-success" />
             </div>
             <div class="col-1">
-                @Html.ActionLink("Regresar", "GetAll", "Usuario", new { @class = "btn btn-danger" })
+                @Html.ActionLink("Regresar", "GetAll", "Usuario", new { @class = "btn btn-outline-danger" })
             </div>
 
         </div>
@@ -274,8 +315,10 @@
 </div>
 
 
-        <script src="~/Scripts/jquery-3.4.1.js"></script>
-        <script type="text/javascript">
+<script src="~/Scripts/jquery-3.4.1.js"></script>
+<script src="~/Scripts/Usuario/Validaciones/ValidacionesUsuario.js"></script>
+<script type="text/javascript">
+
 
             //$(document).ready(function () {
 
@@ -297,8 +340,8 @@
                 if (result.Correct) {
                     $("#ddlMunicipio").empty();
                     $("#ddlColonia").empty();
-                    $("#ddlMunicipio").append('<option value="0">' + 'Selecione un Municipio' + '</option>');
-                    $("#ddlColonia").append('<option value="0">' + 'Selecione una Colonia' + '</option>');
+                    $("#ddlMunicipio").append('<option value="">' + 'Selecione un Municipio' + '</option>');
+                    $("#ddlColonia").append('<option value="">' + 'Selecione una Colonia' + '</option>');
 
                     $.each(result.Objects, function (i, municipios) {
                         $("#ddlMunicipio").append('<option value="'
@@ -328,7 +371,7 @@
             success: function (result) {
                 if (result.Correct) {
                     $("#ddlColonia").empty();
-                    $("#ddlColonia").append('<option value="0">' + 'Selecione una Colonia' + '</option>');
+                    $("#ddlColonia").append('<option value="">' + 'Selecione una Colonia' + '</option>');
 
                     $.each(result.Objects, function (i, colonias) {
                         $("#ddlColonia").append('<option value="'
@@ -346,31 +389,6 @@
         //$("#ddlEstado").val("");
 
 
-
-    function ValidarImagen(file) {
-
-        var allowedExtensions = ["jpg", "jpeg", "png", "gif"];
-        var extension = file.name.split('.').pop().toLowerCase();
-        return allowedExtensions.includes(extension);
-
-    }
-    function ValidarYPrevisualizar(event) {
-        var input = event.target;
-        var file =input.files[0];
-
-        var alerta = document.getElementById("alertaImagen");//-
-
-        if (file && ValidarImagen(file)) {
-
-            alerta.classList.add("d-none"); // Ocultar alerta si el archivo es válido
-            PrevisualizarImgen(file);
-
-        } else
-
-            alerta.classList.remove("d-none"); // Mostrar alerta si el archivo no es válido
-            input.value = "";//Limpiar el input si el archivo no es valido
-    }
-
     function PrevisualizarImagen (event) {
         var output = document.getElementById('imgUsuario');
         output.src = URL.createObjectURL(event.target.files[0]);
@@ -378,5 +396,5 @@
             URL.revokeObjectURL(output.src)
         }
     }
-        </script>
+</script>
 

@@ -77,10 +77,10 @@ namespace PL_MVC.Controllers
             usuario.Direccion.Colonia = new ML.Colonia();
             usuario.Direccion.Colonia.Municipio = new ML.Municipio();
             usuario.Direccion.Colonia.Municipio.Estado = new ML.Estado();
-            ML.Result resultEstados = BL.Estado.GetAllEFSP();
+            ML.Result resultEstados = BL.Estado.GetAllLINQ();
             usuario.Direccion.Colonia.Municipio.Estado.Estados = resultEstados.Objects;
 
-            ML.Result resultRol = BL.Rol.RolGetAllEFSP();
+            ML.Result resultRol = BL.Rol.GetAllRolLINQ();
             usuario.Rol.Roles = resultRol.Objects;
                     
 
@@ -89,7 +89,7 @@ namespace PL_MVC.Controllers
             }
             else if (IdUsuario >0)
             {
-                ML.Result result = BL.Usuario.GetByIdEFSP(IdUsuario.Value);
+                ML.Result result = BL.Usuario.GetByIdEFLinq(IdUsuario.Value);
                 if(result.Correct==true)
                 {
                     usuario = (ML.Usuario)result.Object;
@@ -101,66 +101,107 @@ namespace PL_MVC.Controllers
                     
                     usuario.Direccion.Colonia.Municipio.Estado.Estados = resultEstados.Objects;
                 }
-                ML.Result resultMunicipios = BL.Municipio.GetByIdEstadoEFSP(usuario.Direccion.Colonia.Municipio.Estado.IdEstado);
+                ML.Result resultMunicipios = BL.Municipio.GetByIdEstadoLinQ(usuario.Direccion.Colonia.Municipio.Estado.IdEstado);
                 usuario.Direccion.Colonia.Municipio.Municipios = resultMunicipios.Objects;
-                ML.Result resultColonias = BL.Colonia.GetByIdMunicipioEFSP(usuario.Direccion.Colonia.Municipio.IdMunicipio);
+                ML.Result resultColonias = BL.Colonia.GetByIdMunicipioLinQ(usuario.Direccion.Colonia.Municipio.IdMunicipio);
                 usuario.Direccion.Colonia.Colonias= resultColonias.Objects;
             }          
             return View(usuario);
         }
         [HttpPost]
         public ActionResult Formulario(ML.Usuario usuario, HttpPostedFileBase imgUsuarioInput)
-        { 
-            ML.Result result=new ML.Result();
-            ML.Direccion direccion= new ML.Direccion();
+        {
+            if (ModelState.IsValid)
+            {
+                ML.Result result = new ML.Result();
+                ML.Direccion direccion = new ML.Direccion();
+                ML.Result resultUsername = BL.Usuario.GetByIdUsernameEFLinq(usuario.Nombre);
+                ML.Result resultEmail = BL.Usuario.GetByIdEmailEFLinq(usuario.Email);
+                ML.Result resultCurp = BL.Usuario.GetByIdCURPEFLinq(usuario.CURP);
 
-            if (imgUsuarioInput!=null)
-            {
-                MemoryStream target = new MemoryStream();
-                imgUsuarioInput.InputStream.CopyTo(target);
-                byte[] data = target.ToArray();
-                usuario.Imagen = data;
-
-            }
-            if (usuario.Direccion.IdDireccion > 0)
-            {
-                ML.Result resultDirecc = BL.Direccion.DireccionUpdateEFSP(usuario);
-                usuario.Direccion.IdDireccion = (int)resultDirecc.Object;
-            }
-            else
-            {
-                ML.Result resultDirec= BL.Direccion.DireccionAddEFSP(usuario);
-                if (resultDirec.Correct)
+                if (usuario.IdUsuario == 0)
                 {
-                    usuario.Direccion.IdDireccion=Convert.ToInt32(resultDirec.Object);
+                    if (resultUsername.Correct)
+                    {
+                        ViewBag.Error = "El Nombre de usuario ya se encunetra registrado";
+                    }
+                    if (resultCurp.Correct)
+                    {
+                        ViewBag.Error = "La CURP ya se encunetra registrada";
+                    }
+                    if (resultEmail.Correct)
+                    {
+                        ViewBag.Error = "El Email ya se encunetra registrado";
+                    }
                 }
-            }
-         
-            if (usuario.IdUsuario == 0)
-            {
-                
-                result = BL.Usuario.AddEFSP(usuario);
+                else
+                {
+                    usuario.Direccion.Colonia.Colonias = new List<Object>();
+                    usuario.Direccion.Colonia.Municipio.Municipios = new List<Object>();
+                    usuario.Direccion.Colonia.Municipio.Estado.Estados = new List<Object>();
+                    return View(usuario);
+                }
+
+               
+                if (imgUsuarioInput != null)
+                {
+                    MemoryStream target = new MemoryStream();
+                    imgUsuarioInput.InputStream.CopyTo(target);
+                    byte[] data = target.ToArray();
+                    usuario.Imagen = data;
+
+                }
+                if (usuario.Direccion.IdDireccion > 0)
+                {
+                    ML.Result resultDirecc = BL.Direccion.UpdateLINQ(usuario);
+                    usuario.Direccion.IdDireccion = (int)resultDirecc.Object;
+                }
+                else
+                {
+                    ML.Result resultDirec = BL.Direccion.AddLINQ(usuario);
+                    if (resultDirec.Correct)
+                    {
+                        usuario.Direccion.IdDireccion = Convert.ToInt32(resultDirec.Object);
+                    }
+                }
+
+                if (usuario.IdUsuario == 0)
+                {
+
+                    result = BL.Usuario.AddLINQ(usuario);
+                }
+                else
+                {
+                    //DateTime
+                    result = BL.Usuario.UpdateLINQ(usuario);
+                }
+                if (result.Correct)
+                {
+                    return RedirectToAction("GetAll");
+                }
+
             }
             else
             {
-                //DateTime
-                result = BL.Usuario.UpdateEFSP(usuario);
+                //llenar los ddl
+                
+                usuario.Direccion.Colonia.Colonias=new List<Object>();
+                usuario.Direccion.Colonia.Municipio.Municipios = new List<Object>();
+                usuario.Direccion.Colonia.Municipio.Estado.Estados = new List<Object>();
+                return View(usuario);
             }
-            if (result.Correct)
-            {
-                return RedirectToAction("GetAll");
-            }
+            
             return View();
         }
         public ActionResult Delete(int IdDireccion)
         {
-            ML.Result result = BL.Usuario.DeleteEFSP(IdDireccion);
+            ML.Result result = BL.Usuario.DeleteLINQ(IdDireccion);
             if (result.Correct)
             {
                 
                 if(IdDireccion > 0)
                 {
-                    ML.Result resultdirec=BL.Direccion.DireccionDeleteEFSP(IdDireccion);
+                    ML.Result resultdirec=BL.Direccion.DeleteLINQ(IdDireccion);
                 }
                 //CScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Eata seguro de eliminar este usuario')", true);
                 return RedirectToAction("GetAll");
@@ -176,7 +217,7 @@ namespace PL_MVC.Controllers
         public ActionResult DropDownList()
         {
             ML.Usuario usuario = new ML.Usuario();
-            ML.Result resultEstados = BL.Estado.GetAll();
+            ML.Result resultEstados = BL.Estado.GetAllLINQ();
 
             usuario.Direccion = new ML.Direccion();
             usuario.Direccion.Colonia = new ML.Colonia();
@@ -200,6 +241,13 @@ namespace PL_MVC.Controllers
             ML.Result result = BL.Colonia.GetByIdMunicipio(IdMunicipio);
             return Json(result, JsonRequestBehavior.AllowGet);
 
+        }
+
+        [HttpGet]
+        public JsonResult UpdateEstatus(int IdUsuario,bool Estatus)
+        {
+            ML.Result result = BL.Usuario.UpdateEstatusEFSP(IdUsuario,Estatus);
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
     }
 }

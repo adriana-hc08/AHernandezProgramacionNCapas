@@ -1,0 +1,32 @@
+using (var parser = new TextFieldParser(new StringReader(result)))
+            {
+                var headerRow = true;
+                var dt = new DataTable();
+
+                parser.Delimiters = new[] { "|" };
+
+                while (!parser.EndOfData)
+                {
+                    var currentRow = parser.ReadFields();
+                    if (headerRow)
+                    {
+                        foreach (var field in currentRow)
+                        {
+                            dt.Columns.Add(field, typeof(object));
+                        }
+                        headerRow = false;
+                    }
+                    else
+                    {
+                        dt.Rows.Add(currentRow);
+                    }
+                }
+                Console.WriteLine(result);
+            }
+--------------------------------------------------------------------------------------------------------------
+result = Regex.Replace(result,"\r?\n", "\n");
+            string[] strings = result.Split(new char[] { '\n' }, StringSplitOptions.None);
+            if(strings.Length > 0)
+            {
+                result = string.Join("\n", strings.Skip(1));
+            }

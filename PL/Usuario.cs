@@ -199,9 +199,7 @@ namespace PL
             Console.ReadKey();
         }
         public static void GetbyId()
-        {
-            
-
+        {          
             Console.WriteLine("ingresa el id del usuario a visualizar");
             int IdUsuario = Convert.ToInt32(Console.ReadLine());
 

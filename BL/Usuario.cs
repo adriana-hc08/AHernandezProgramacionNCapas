@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Entity.Core.Objects;
+using System.Data.OleDb;
 using System.Data.SqlClient;
 using System.Globalization;
 using System.Linq;
@@ -509,8 +510,8 @@ namespace BL
                             usuario.Rol.Nombre = usuarioDB.Rol;
                             usuario.Email= usuarioDB.Email;
                             usuario.Password= usuarioDB.Password;
-                            usuario.FechaNacimiento= usuarioDB.FechaNacimiento.ToString();
-                            usuario.Sexo= usuarioDB.Sexo[0];
+                            usuario.FechaNacimiento= usuarioDB.FechaNacimiento.Value.ToString("dd-MM-yyyy");
+                            usuario.Sexo= Convert.ToChar(usuarioDB.Sexo);
                             usuario.Telefono= usuarioDB.Telefono;
                             usuario.Celular= usuarioDB.Celular;
                             usuario.Estatus= usuarioDB.Estatus;
@@ -572,8 +573,8 @@ namespace BL
                             
                             usuario.Email = usuarioDB.Email;
                             usuario.Password = usuarioDB.Password;
-                            usuario.FechaNacimiento = usuarioDB.FechaNacimiento.Value.ToString("dd-MM-yyyy");
-                            usuario.Sexo = usuarioDB.Sexo[0];
+                            usuario.FechaNacimiento = usuarioDB.FechaNacimiento.Value.ToString("dd-MM-yyyy"); 
+                            usuario.Sexo =Convert.ToChar (usuarioDB.Sexo);
                             usuario.Telefono = usuarioDB.Telefono;
                             usuario.Celular = usuarioDB.Celular;
                             usuario.Estatus = usuarioDB.Estatus;
@@ -650,7 +651,7 @@ namespace BL
                 using (DL_EF.AHernandezProgramacionNCapasEntities contex = new DL_EF.AHernandezProgramacionNCapasEntities())
                 {
                     var rowsAffected = contex.UsuarioUpdate(usuario.IdUsuario, usuario.Nombre, usuario.ApellidoPaterno, usuario.ApellidoMaterno,
-                        usuario.UserName, usuario.Rol.IdRol, usuario.Email, usuario.Password, usuario.FechaNacimiento,
+                        usuario.UserName, usuario.Rol.IdRol, usuario.Email, usuario.Password, usuario.FechaNacimiento.ToString(),
                         usuario.Sexo.ToString(), usuario.Telefono, usuario.Celular, usuario.Estatus, usuario.CURP, usuario.Imagen,
                         usuario.Direccion.IdDireccion);
 
@@ -683,7 +684,7 @@ namespace BL
                 using (DL_EF.AHernandezProgramacionNCapasEntities contex = new DL_EF.AHernandezProgramacionNCapasEntities())
                 {
                     
-                    var rowsAffected = contex.UsuarioDelete(IdDireccion);
+                    var rowsAffected = contex.UsuarioDireccionDelete(IdDireccion);
                     if (rowsAffected > 0)
                     {                       
                         result.Correct = true;
@@ -1144,6 +1145,118 @@ namespace BL
                 result.Ex = ex;
             }
 
+            return result;
+        }
+        public static ML.Result leerExcel(string connectionString)
+        {
+            ML.Result result = new ML.Result();
+            try
+            {
+                using (OleDbConnection contex = new OleDbConnection(connectionString))
+                {
+                    string query = "SELECT * FROM [Sheet1$]";
+                    using (OleDbCommand cmd = new OleDbCommand())
+                    {
+                        cmd.CommandText = query;
+                        cmd.Connection = contex;
+
+                        OleDbDataAdapter adapter = new OleDbDataAdapter();
+                        adapter.SelectCommand = cmd;
+
+                        DataTable dt = new DataTable();
+                        adapter.Fill(dt);
+
+                        if (dt.Rows.Count > 0)
+                        {
+                            result.Objects = new List<object>();
+                            foreach (DataRow row in dt.Rows)
+                            {
+                                if (row.ItemArray.Length == 13 && row != null)
+                                {
+                                    ML.Usuario usuario = new ML.Usuario();
+                                    usuario.Rol = new ML.Rol();
+                                    //usuario.IdUsuario = Convert.ToInt32(row[0].ToString());
+                                    usuario.Nombre = (row[0].ToString());
+                                    usuario.ApellidoPaterno = (row[1].ToString());
+                                    usuario.ApellidoMaterno = (row[2].ToString());
+                                    usuario.UserName = (row[3].ToString());
+                                    usuario.Rol.IdRol = Convert.ToByte(row[4].ToString());
+                                    usuario.Email = (row[5].ToString());
+                                    usuario.Password = (row[6].ToString());
+                                    usuario.FechaNacimiento = (row[7].ToString());
+                                    usuario.Sexo = Convert.ToChar(row[8].ToString());
+                                    usuario.Telefono = (row[9].ToString());
+                                    usuario.Celular = (row[10].ToString());
+                                    usuario.Estatus = Convert.ToBoolean(row[11].ToString());
+                                    usuario.CURP = (row[12].ToString());
+
+                                    result.Objects.Add(usuario);
+
+                                }
+
+                            }
+                            result.Correct = true;
+
+                        }
+                        else
+                        {
+                            result.Correct = false;
+                            result.ErrorMessage = "No se encontraron registros";
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Correct = false;
+                result.ErrorMessage = ex.Message;
+                result.Ex = ex;
+            }
+            return result;
+        }
+        public static ML.Result AddEFSPWITHCURP(ML.Usuario usuario)
+        {
+            ML.Result result = new ML.Result();
+            try
+            {
+                using (DL_EF.AHernandezProgramacionNCapasEntities contex = new DL_EF.AHernandezProgramacionNCapasEntities())
+                {
+                    int? direccion = null;
+                    if (usuario.Direccion.IdDireccion == 0)
+                    {
+                        direccion = null;
+                    }
+                    else
+                    {
+                        direccion = usuario.Direccion.IdDireccion;
+                    }
+                    DateTime fechaNacimiento = DateTime.ParseExact(usuario.FechaNacimiento, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+
+                    string FechaNacimiento = fechaNacimiento.ToString("dd-MM-yyyy");
+
+                    ObjectParameter idUsuario = new ObjectParameter("IdUsuario", typeof(int));
+                    var rowsAffected = contex.UsuarioAddWithCURP(usuario.Nombre, usuario.ApellidoPaterno, usuario.ApellidoMaterno,
+                        usuario.UserName, usuario.Rol.IdRol, usuario.Email, usuario.Password, FechaNacimiento,
+                        usuario.Sexo.ToString(), usuario.Telefono, usuario.Celular, usuario.Estatus, usuario.Imagen,
+                        direccion);
+                    if (rowsAffected > 0)
+                    {
+                        result.Correct = true;
+                    }
+                    else
+                    {
+                        result.Correct = false;
+                        result.ErrorMessage = "No se pudo agregar";
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                result.Correct = false;
+                result.ErrorMessage = ex.Message;
+                result.Ex = ex;
+            }
             return result;
         }
     }
